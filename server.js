@@ -1,6 +1,8 @@
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASSWORD;
 
 const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb+srv://wowee:u35bhTNEueAi6GYT@cluster0.chijf.mongodb.net/SampleMERN?retryWrites=true&w=majority&appName=Cluster0";
+const url = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.chijf.mongodb.net/SampleMERN?retryWrites=true&w=majority&appName=Cluster0`;
 const client = new MongoClient(url);
 client.connect();
 
