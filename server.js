@@ -57,6 +57,31 @@ app.post('/api/addcard', async (req, res, next) =>
 app.post('/api/register', async (req, res, next) =>
   {
     
+    // incoming: login, password, firstName, lastName
+    // outgoing: error 
+
+    const { login, password, firstName, lastName } = req.body; 
+
+    const newUser = {Login:login,Password:password,FirstName:firstName,LastName:lastName}; 
+    var error = '';
+    
+    try
+    {
+
+      const db = client.db(); 
+      const result = db.collection('Users').insertOne(newUser); 
+
+    }
+    catch(e)
+    {
+
+      error = e.toString(); 
+
+    }
+
+    var ret = { error : error };
+    res.status(200).json(ret);  
+
   });
   
 
