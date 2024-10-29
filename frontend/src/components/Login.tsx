@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Login()
 {
@@ -71,6 +72,8 @@ function Login()
         <br></br><input type="password" id="loginPassword" placeholder="Password" onChange={handleSetPassword} />
         <br></br><input type="submit" id="loginButton" className="buttons" value = "Login"
           onClick={doLogin} />
+        <br></br> <br></br>
+        <Link to="/register" className="registerLink">Register Now</Link>
         <span id="loginResult">{message}</span>
      </div>
     );
