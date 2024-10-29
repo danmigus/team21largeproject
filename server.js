@@ -53,6 +53,11 @@ app.post('/api/addcard', async (req, res, next) =>
   var ret = { error: error };
   res.status(200).json(ret);
 });
+
+app.post('/api/register', async (req, res, next) =>
+  {
+    
+  });
   
 
 app.post('/api/login', async (req, res, next) => 
