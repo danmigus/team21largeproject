@@ -5,7 +5,7 @@ In droplet/live:
 	Back end/ API: replace server.js in /var/cardsServer. Then "pm2 reboot 0"
 
 In local testing:
-	Front end: nav to root/frontend/ then "npm start" Nodemon should be in-place.
+	Front end: nav to root/frontend/ then "npm run dev" Nodemon should be in-place.
 	Back end/ API: nav to root where server.js is located. Then "npm start"
 	
 	
