@@ -1,0 +1,11 @@
+!IMPORTANT FOR FRONTEND!: Https is used and a reverse proxy is setup. The fetch url should be https://galaxycollapse.com/api/some_api . Rginx handles this in it's default file.
+
+In droplet/live:
+	Front end: nav to /root/frontend then "npm run build". Then transfer /dist files to 		  /var/www/html
+	Back end/ API: replace server.js in /var/cardsServer. Then "pm2 reboot 0"
+
+In local testing:
+	Front end: nav to root/frontend/ then "npm start" Nodemon should be in-place.
+	Back end/ API: nav to root where server.js is located. Then "npm start"
+	
+	
