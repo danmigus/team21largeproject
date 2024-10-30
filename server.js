@@ -60,9 +60,9 @@ app.post('/api/register', async (req, res, next) =>
     // incoming: login, password, firstName, lastName, email
     // outgoing: error 
 
-    const { login, password, firstName, lastName , email} = req.body; 
+    const { us, pass, f, l , e} = req.body; 
 
-    const newUser = {Login:login,Password:password,FirstName:firstName,LastName:lastName, Email:email}; 
+    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:e}; 
     var error = '';
     
     try

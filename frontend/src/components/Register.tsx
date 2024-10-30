@@ -4,8 +4,11 @@ import { Link } from 'react-router-dom';
 function Register()
 {
     const [registerMessage,setMessage] = useState('');
-    const [registerName,setLoginName] = React.useState('');
+    const [registerFirstName,setFirstName] = React.useState('');
+    const [registerLastName,setLastName] = React.useState(''); 
+    const [registerUsername,setLoginName] = React.useState('');
     const [registerPassword,setPassword] = React.useState('');
+    const [registerEmail,setEmail] = React.useState('');
     const app_name = 'galaxycollapse.com';
 
     function buildPath(route:string) : string
@@ -20,7 +23,22 @@ function Register()
         }
     }
 
-    function handleSetRegisterName( e: any ) : void
+    function handleSetRegisterFirstName (e: any) : void
+    {
+        setFirstName (e.target.value);
+    }
+
+    function handleSetRegisterLastName (e: any) : void
+    {
+        setLastName (e.target.value);
+    }
+
+    function handleSetRegisterEmail (e: any) : void
+    {
+        setEmail (e.target.value);
+    }
+
+    function handleSetRegisterUsername( e: any ) : void
     {
       setLoginName( e.target.value );
     }
@@ -34,25 +52,55 @@ function Register()
     async function doRegister(event:any) : Promise<void>
     {
         event.preventDefault();
-        window.alert("Not working yet!")
 
-        var obj = {registerName, registerPassword};
+        var obj = {us: registerUsername, pass: registerPassword, f: registerFirstName, l: registerLastName, e: registerEmail};
+
+        if (obj.us == "" || obj.pass == "" || obj.f == "" || obj.l == "" || obj.e == "")
+        {
+            setMessage("One or more fields missing");
+            return;
+        }
+
         var js = JSON.stringify(obj);
-        js
-        buildPath("Hi");
-        setMessage("Hi");
+
+        try
+        {    
+            const response = await fetch(buildPath("api/register"),
+                {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+  
+            var res = JSON.parse(await response.text());
+            console.log(res);
+
+            let registrationForm = document.getElementById("registrationForm") as HTMLDivElement;
+            registrationForm.style.display = "none";
+            setMessage('Successful Registration!');
+        }
+        catch(error:any)
+        {
+            setMessage('Unsuccessful Registration :(');
+            alert(error.toString());
+            return;
+        }    
     }   
 
     return(
         <div id="registerDiv"> 
-            <h1> Registration </h1>
-            <br></br>
-            <input type="text" id="registerName" placeholder="Username" onChange={handleSetRegisterName} />
-            <br></br>
-            <input type="password" id="registerPassword" placeholder="Password" onChange={handleSetRegisterPassword} />
-            <br></br>
-            <input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={doRegister}/>
-            <br></br><br></br>
+            <div id="registrationForm">
+                <h1> Registration </h1>
+                <br></br>
+                <input type="text" id="registerFirstName" placeholder="FirstName" onChange={handleSetRegisterFirstName} />
+                <br></br>
+                <input type="text" id="registerLastName" placeholder="LastName" onChange={handleSetRegisterLastName} />
+                <br></br>
+                <input type="text" id="registerUsername" placeholder="Username" onChange={handleSetRegisterUsername} />
+                <br></br>
+                <input type="password" id="registerPassword" placeholder="Password" onChange={handleSetRegisterPassword} />
+                <br></br>
+                <input type="email" id="registerEmail" placeholder="Email" pattern=".+@example\.com" onChange={handleSetRegisterEmail}  required />
+                <br></br>
+                <input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={doRegister}/>
+                <br></br>
+            </div>
             <span id="registerResult">{registerMessage}</span>
             <br></br>
             <Link to="/" className="returnLink">Return to Login</Link>
