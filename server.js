@@ -100,18 +100,19 @@ app.post('/api/login', async (req, res, next) =>
   var id = -1;
   var fn = '';
   var ln = '';
+  var em = '';
+  
 
   if( results.length > 0 )
   {
-    id = results[0].UserId;
+    //id = results[0].UserId;
     fn = results[0].FirstName;
     ln = results[0].LastName;
+    em = results[0].Email;
+    id = results[0]._id;
   }
 
-  console.log(id);
-  console.log(fn);
-
-  var ret = { id:id, firstName:fn, lastName:ln, error:''};
+  var ret = { id:id, email:em, firstName:fn, lastName:ln, error:''};
   res.status(200).json(ret);
 });
   
