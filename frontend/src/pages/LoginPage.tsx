@@ -1,4 +1,4 @@
-import PageTitle from '../components/PageTitle.tsx';
+// import PageTitle from '../components/PageTitle.tsx';
 import Login from '../components/Login.tsx';
 
 const LoginPage = () =>
@@ -6,8 +6,8 @@ const LoginPage = () =>
 
     return(
       <div>
-        <img src="./src/assets/cat.gif"></img>
-        <PageTitle />
+        <img src="./src/assets/football.JPG"></img>
+        {/*<PageTitle />*/}
         <Login />
       </div>
     );
