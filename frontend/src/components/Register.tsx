@@ -62,7 +62,7 @@ function Register()
 
         if (obj.us == "" || obj.pass == "" || obj.f == "" || obj.l == "" || obj.em == "")
         {
-            setMessage("One or more fields missing");
+            setMessage("😵‍💫 One or more fields missing 😵‍💫");
             return;
         }
 
@@ -80,11 +80,11 @@ function Register()
             registrationForm.style.display = "none";
             let verificationForm = document.getElementById("verificationForm") as HTMLDivElement;
             verificationForm.style.display = "block";
-            setMessage('Please enter the verification token sent to your email');
+            setMessage('📧 Please enter the verification token sent to your email 📧');
         }
         catch(error:any)
         {
-            setMessage('Unsuccessful Registration...');
+            setMessage('❌ Unsuccessful Registration...');
             alert(error.toString());
             return;
         }    
@@ -99,10 +99,28 @@ function Register()
 
         event.preventDefault();
 
-        var obj = {verificationToken: verificationToken};
-
+        var obj = {token: verificationToken, email: registerEmail};
         var js = JSON.stringify(obj);
-        console.log(js);
+
+        try
+        {    
+            const response = await fetch(buildPath("api/verify"),
+                {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+  
+            var res = JSON.parse(await response.text());
+
+            if (res.error === '0')
+                setMessage('✅ Successful verification. Please return to login');
+            else
+                setMessage('❌ Unsuccessful verification');
+        }
+        catch(error:any)
+        {
+            setMessage('❌ Something went wrong...');
+            alert(error.toString());
+            return;
+        }    
+
     }
 
     return(

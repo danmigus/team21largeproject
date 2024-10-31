@@ -67,8 +67,9 @@ app.post('/api/register', async (req, res, next) =>
     const { us, pass, f, l , em, token} = req.body; 
     const c = require('crypto');
     let generatedToken = c.randomBytes(16).toString("hex");
+    let verificationFlag = false;
 
-    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em, Token: generatedToken}; 
+    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em, Token: generatedToken, VerificationFlag: verificationFlag}; 
     var error = '';
     
     try
@@ -88,6 +89,32 @@ app.post('/api/register', async (req, res, next) =>
     var ret = { error : error };
     res.status(200).json(ret);  
 
+  });
+
+app.post('/api/verify', async (req, res, next) =>
+  {
+    var error = '';
+    try
+    {
+      const db = client.db(); 
+      const results = await db.collection('Users').find({Email: req.body.email}).toArray();
+
+      // (Server-side generated token === token sent by user in frontend)
+      if (results[0].Token === req.body.token)
+      {
+        const changeFlag = await db.collection('Users').updateOne({Email: req.body.email}, {$set: {VerificationFlag: true}})
+        error = '0';
+      }
+    }
+
+    catch(e)
+    {
+      error = e.toString(); 
+    }
+  
+    var ret = { error:error};
+    res.status(200).json(ret);  
+  
   });
   
 
