@@ -178,6 +178,100 @@ app.post('/api/addplayers', async (req, res) =>
         { upsert: true }
       );
     }
+
+    response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=WR&scoring=PPR', {
+      method: 'GET',
+      headers: {
+        'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
+      }
+
+    }); 
+
+    playerData = await response.json(); 
+    players = playerData.players; 
+    
+    db = client.db(); 
+    
+    for (const player of players) {
+      const { player_name, player_team_id, player_image_url, rank_ecr } = player;
+
+      // Use updateOne with upsert: true to replace or insert each player
+      await db.collection('Players').updateOne(
+        { player_name, player_team_id },  // Find players by name and team ID
+        {
+          $set: {
+            player_name,
+            player_team_id,
+            player_image_url,
+            rank_ecr
+          }
+        },
+        { upsert: true }
+      );
+    }
+
+    response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=RB&scoring=PPR', {
+      method: 'GET',
+      headers: {
+        'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
+      }
+
+    }); 
+
+    playerData = await response.json(); 
+    players = playerData.players; 
+    
+    db = client.db(); 
+    
+    for (const player of players) {
+      const { player_name, player_team_id, player_image_url, rank_ecr } = player;
+
+      // Use updateOne with upsert: true to replace or insert each player
+      await db.collection('Players').updateOne(
+        { player_name, player_team_id },  // Find players by name and team ID
+        {
+          $set: {
+            player_name,
+            player_team_id,
+            player_image_url,
+            rank_ecr
+          }
+        },
+        { upsert: true }
+      );
+    }
+
+    response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=TE&scoring=PPR', {
+      method: 'GET',
+      headers: {
+        'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
+      }
+
+    }); 
+
+    playerData = await response.json(); 
+    players = playerData.players; 
+    
+    db = client.db(); 
+    
+    for (const player of players) {
+      const { player_name, player_team_id, player_image_url, rank_ecr } = player;
+
+      // Use updateOne with upsert: true to replace or insert each player
+      await db.collection('Players').updateOne(
+        { player_name, player_team_id },  // Find players by name and team ID
+        {
+          $set: {
+            player_name,
+            player_team_id,
+            player_image_url,
+            rank_ecr
+          }
+        },
+        { upsert: true }
+      );
+    }
+    
     
   }catch(e){
 
