@@ -162,7 +162,7 @@ app.post('/api/addplayers', async (req, res) =>
     const db = client.db(); 
     
     for (const player of players) {
-      const { player_name, player_team_id, player_image_url, rank_ecr } = player;
+      const { player_name, player_team_id, player_position_id, player_image_url, rank_ecr } = player;
 
       // Use updateOne with upsert: true to replace or insert each player
       await db.collection('Players').updateOne(
@@ -171,6 +171,7 @@ app.post('/api/addplayers', async (req, res) =>
           $set: {
             player_name,
             player_team_id,
+            player_position_id,
             player_image_url,
             rank_ecr
           }
@@ -191,7 +192,7 @@ app.post('/api/addplayers', async (req, res) =>
     const players2 = playerData2.players; 
         
     for (const player of players2) {
-      const { player_name, player_team_id, player_image_url, rank_ecr } = player;
+      const { player_name, player_team_id, player_position_id, player_image_url, rank_ecr } = player;
 
       // Use updateOne with upsert: true to replace or insert each player
       await db.collection('Players').updateOne(
@@ -200,6 +201,7 @@ app.post('/api/addplayers', async (req, res) =>
           $set: {
             player_name,
             player_team_id,
+            player_position_id,
             player_image_url,
             rank_ecr
           }
@@ -220,7 +222,7 @@ app.post('/api/addplayers', async (req, res) =>
     const players3 = playerData3.players; 
         
     for (const player of players3) {
-      const { player_name, player_team_id, player_image_url, rank_ecr } = player;
+      const { player_name, player_team_id, player_position_id, player_image_url, rank_ecr } = player;
 
       // Use updateOne with upsert: true to replace or insert each player
       await db.collection('Players').updateOne(
@@ -229,6 +231,7 @@ app.post('/api/addplayers', async (req, res) =>
           $set: {
             player_name,
             player_team_id,
+            player_position_id,
             player_image_url,
             rank_ecr
           }
@@ -249,7 +252,7 @@ app.post('/api/addplayers', async (req, res) =>
     const players4 = playerData4.players; 
         
     for (const player of players4) {
-      const { player_name, player_team_id, player_image_url, rank_ecr } = player;
+      const { player_name, player_team_id, player_position_id, player_image_url, rank_ecr } = player;
 
       // Use updateOne with upsert: true to replace or insert each player
       await db.collection('Players').updateOne(
@@ -258,6 +261,7 @@ app.post('/api/addplayers', async (req, res) =>
           $set: {
             player_name,
             player_team_id,
+            player_position_id,
             player_image_url,
             rank_ecr
           }
