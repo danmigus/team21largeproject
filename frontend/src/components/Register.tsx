@@ -53,9 +53,9 @@ function Register()
     {
         event.preventDefault();
 
-        var obj = {us: registerUsername, pass: registerPassword, f: registerFirstName, l: registerLastName, e: registerEmail};
+        var obj = {us: registerUsername, pass: registerPassword, f: registerFirstName, l: registerLastName, em: registerEmail};
 
-        if (obj.us == "" || obj.pass == "" || obj.f == "" || obj.l == "" || obj.e == "")
+        if (obj.us == "" || obj.pass == "" || obj.f == "" || obj.l == "" || obj.em == "")
         {
             setMessage("One or more fields missing");
             return;
