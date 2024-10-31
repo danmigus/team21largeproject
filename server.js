@@ -208,7 +208,7 @@ app.post('/api/addplayers', async (req, res) =>
       );
     }
 
-    const response3 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=WR&scoring=PPR', {
+    const response3 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=RB&scoring=PPR', {
       method: 'GET',
       headers: {
         'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
@@ -237,7 +237,7 @@ app.post('/api/addplayers', async (req, res) =>
       );
     }
 
-    const response4 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=WR&scoring=PPR', {
+    const response4 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=TE&scoring=PPR', {
       method: 'GET',
       headers: {
         'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
