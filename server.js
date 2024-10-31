@@ -145,6 +145,9 @@ app.post('/api/login', async (req, res, next) =>
     id = results[0]._id;
   }
 
+  if (results[0].VerificationFlag === false)
+    id = -1;
+
   var ret = { id:id, email:em, firstName:fn, lastName:ln, error:''};
   res.status(200).json(ret);
 });

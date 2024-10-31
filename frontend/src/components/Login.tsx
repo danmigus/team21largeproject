@@ -46,7 +46,7 @@ function Login()
 
           if( res.id <= 0 )
           {
-              setMessage('User/Password combination incorrect');
+              setMessage('Incorrect user credentials or verification needed');
           }
           else
           {
@@ -74,7 +74,7 @@ function Login()
           onClick={doLogin} />
         <br></br> <br></br>
         <Link to="/register" className="registerLink">Register Now</Link>
-        <span id="loginResult">{message}</span>
+        <div id="loginResult">{message}</div>
      </div>
     );
 };
