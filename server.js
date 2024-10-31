@@ -120,33 +120,38 @@ app.post('/api/verify', async (req, res, next) =>
 
 app.post('/api/login', async (req, res, next) => 
 {
-  // incoming: login, password
-  // outgoing: id, firstName, lastName, error
-  
   var error = '';
-
+  console.log(req.body);
   const { login, password } = req.body;
-
   const db = client.db();
-  const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
 
-  var id = -1;
-  var fn = '';
-  var ln = '';
-  var em = '';
-  
-
-  if( results.length > 0 )
+  try
   {
-    //id = results[0].UserId;
-    fn = results[0].FirstName;
-    ln = results[0].LastName;
-    em = results[0].Email;
-    id = results[0]._id;
-  }
+    const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
 
-  if (results[0].VerificationFlag === false)
-    id = -1;
+    var id = -1;
+    var fn = '';
+    var ln = '';
+    var em = '';
+    
+
+    if( results.length > 0 )
+    {
+      //id = results[0].UserId;
+      fn = results[0].FirstName;
+      ln = results[0].LastName;
+      em = results[0].Email;
+      id = results[0]._id;
+    }
+
+    if (results[0].VerificationFlag === false)
+      id = -1;
+
+  }
+  catch(e)
+  {
+    error = e.toString(); 
+  }
 
   var ret = { id:id, email:em, firstName:fn, lastName:ln, error:''};
   res.status(200).json(ret);
