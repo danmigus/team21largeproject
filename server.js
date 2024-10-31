@@ -179,7 +179,7 @@ app.post('/api/addplayers', async (req, res) =>
       );
     }
 
-    response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=WR&scoring=PPR', {
+    const response2 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=WR&scoring=PPR', {
       method: 'GET',
       headers: {
         'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
@@ -187,12 +187,10 @@ app.post('/api/addplayers', async (req, res) =>
 
     }); 
 
-    playerData = await response.json(); 
-    players = playerData.players; 
-    
-    db = client.db(); 
-    
-    for (const player of players) {
+    const playerData2 = await response2.json(); 
+    const players2 = playerData2.players; 
+        
+    for (const player of players2) {
       const { player_name, player_team_id, player_image_url, rank_ecr } = player;
 
       // Use updateOne with upsert: true to replace or insert each player
@@ -210,7 +208,7 @@ app.post('/api/addplayers', async (req, res) =>
       );
     }
 
-    response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=RB&scoring=PPR', {
+    const response3 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=WR&scoring=PPR', {
       method: 'GET',
       headers: {
         'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
@@ -218,12 +216,10 @@ app.post('/api/addplayers', async (req, res) =>
 
     }); 
 
-    playerData = await response.json(); 
-    players = playerData.players; 
-    
-    db = client.db(); 
-    
-    for (const player of players) {
+    const playerData3 = await response3.json(); 
+    const players3 = playerData3.players; 
+        
+    for (const player of players3) {
       const { player_name, player_team_id, player_image_url, rank_ecr } = player;
 
       // Use updateOne with upsert: true to replace or insert each player
@@ -241,7 +237,7 @@ app.post('/api/addplayers', async (req, res) =>
       );
     }
 
-    response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=TE&scoring=PPR', {
+    const response4 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=WR&scoring=PPR', {
       method: 'GET',
       headers: {
         'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
@@ -249,12 +245,10 @@ app.post('/api/addplayers', async (req, res) =>
 
     }); 
 
-    playerData = await response.json(); 
-    players = playerData.players; 
-    
-    db = client.db(); 
-    
-    for (const player of players) {
+    const playerData4 = await response4.json(); 
+    const players4 = playerData4.players; 
+        
+    for (const player of players4) {
       const { player_name, player_team_id, player_image_url, rank_ecr } = player;
 
       // Use updateOne with upsert: true to replace or insert each player
