@@ -1,6 +1,10 @@
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 
+const ourTime = new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'});
+console.log("Server restarted: " + ourTime);
+console.error("Server restarted: " + ourTime);
+
 const MongoClient = require('mongodb').MongoClient;
 const url = `mongodb+srv://${dbUser}:${dbPassword}@cluster0.chijf.mongodb.net/SampleMERN?retryWrites=true&w=majority&appName=Cluster0`;
 const client = new MongoClient(url);
@@ -139,7 +143,7 @@ app.post('/api/searchplayer', async (req, res, next) =>
 
 app.post('/api/addplayers', async (req, res) => 
 {
-  
+  var error = '';  
   try {
 
     const response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=QB&scoring=PPR', {
