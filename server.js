@@ -64,9 +64,11 @@ app.post('/api/register', async (req, res, next) =>
     // incoming: login, password, firstName, lastName, email
     // outgoing: error 
 
-    const { us, pass, f, l , em} = req.body; 
+    const { us, pass, f, l , em, token} = req.body; 
+    const c = require('crypto');
+    let generatedToken = c.randomBytes(16);
 
-    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em}; 
+    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em, Token: generatedToken}; 
     var error = '';
     
     try
