@@ -137,7 +137,8 @@ app.post('/api/searchplayer', async (req, res, next) =>
 
 });
 
-app.post('/api/addplayers', async (req, res) => {
+app.post('/api/addplayers', async (req, res) => 
+{
   
   try {
 
