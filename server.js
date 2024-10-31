@@ -60,9 +60,9 @@ app.post('/api/register', async (req, res, next) =>
     // incoming: login, password, firstName, lastName, email
     // outgoing: error 
 
-    const { us, pass, f, l , e} = req.body; 
+    const { us, pass, f, l , em} = req.body; 
 
-    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:e}; 
+    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em}; 
     var error = '';
     
     try
@@ -115,7 +115,73 @@ app.post('/api/login', async (req, res, next) =>
   var ret = { id:id, email:em, firstName:fn, lastName:ln, error:''};
   res.status(200).json(ret);
 });
+
+app.post('/api/addtoroster', async (req, res, next) =>
+{
+    
+
+
+});
   
+app.post('/api/removefromroster', async (req, res, next) =>
+{
+ 
+  
+
+});
+
+app.post('/api/searchplayer', async (req, res, next) =>
+{
+
+
+
+});
+
+app.post('/api/addplayers', async (req, res) => {
+  
+  try {
+
+    const response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=QB&scoring=PPR', {
+      method: 'GET',
+      headers: {
+        'x-api-key': 'MW2mJnL2eRaWnZ84Gfvg89vjErgFL11h1aDU2AYE',
+      }
+
+    }); 
+
+    const playerData = await response.json(); 
+    const players = playerData.players; 
+    
+    const db = client.db(); 
+    
+    for (const player of players) {
+      const { player_name, player_team_id, player_image_url, rank_ecr } = player;
+
+      // Use updateOne with upsert: true to replace or insert each player
+      await db.collection('Players').updateOne(
+        { player_name, player_team_id },  // Find players by name and team ID
+        {
+          $set: {
+            player_name,
+            player_team_id,
+            player_image_url,
+            rank_ecr
+          }
+        },
+        { upsert: true }
+      );
+    }
+    
+  }catch(e){
+
+    error = e.toString(); 
+
+  }
+
+  var ret = { error : error };
+  res.status(200).json(ret); 
+
+});
 
 
   
