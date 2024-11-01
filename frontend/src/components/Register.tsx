@@ -76,8 +76,15 @@ function Register()
             var res = JSON.parse(await response.text());
             console.log(res);
 
+            if (res.error === "Username or email already exists")
+            {
+                setMessage("Username or email already exists 😡");
+                return;
+            }
+
             let registrationForm = document.getElementById("registrationForm") as HTMLDivElement;
             registrationForm.style.display = "none";
+
             let verificationForm = document.getElementById("verificationForm") as HTMLDivElement;
             verificationForm.style.display = "block";
             setMessage('📧 Please enter the verification token sent to your email 📧');
@@ -143,7 +150,6 @@ function Register()
             </div>
             <div id="verificationForm" style={{display: "none"}}>
                 <h1> Verify </h1>
-                <div id="registerResult">{registerMessage}</div>
                 <br></br>
                 <input type="text" id="verifyToken" placeholder="Enter verification token here" onChange={handleSetVerificationToken} />
                 <br></br>
@@ -151,6 +157,7 @@ function Register()
             </div>
             <br></br>
             <Link to="/" className="returnLink">Return to Login</Link>
+            <div id="registerResult">{registerMessage}</div>
         </div>
     );
 };
