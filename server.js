@@ -177,9 +177,13 @@ app.post('/api/addtoroster', async (req, res, next) =>
 
       if(!roster){
         error = "Roster does not exist or access denied"; 
+
       }else{
+
+        const playerObjectIds = roster.players.map(id => new ObjectId(id));
+
         const players = await db.collection('Players').find({
-          _id:{$in: roster.players}
+          _id:{$in: playerObjectIds}
         }).toArray(); 
 
         rosterData = {
