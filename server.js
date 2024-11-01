@@ -122,9 +122,38 @@ app.post('/api/addtoroster', async (req, res, next) =>
   });
     
   app.post('/api/removefromroster', async (req, res, next) =>
-  {
-   
-    
+    {
+      //incoming: userId, rosterId, playerId
+      //outgoing: error
+      
+      const { userId, rosterId, playerId }= req.body; 
+      let error = ''; 
+
+      try
+      {
+
+        const db = client.db();
+
+        const result = await db.collection('Rosters').updateOne(
+          {_id: new ObjectId(rosterId), UserId:userId},
+          {$pull:{players:playerId} }
+
+        ); 
+
+        if(result.matchedCount === 0){
+          error = "This roster does not exist."; 
+        }
+
+
+      }
+      catch(e)
+      {
+        error = e.toString(); 
+      }
+
+      const ret = {error:error}; 
+      res.status(200).json(ret); 
+  
   
   });
 
