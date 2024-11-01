@@ -157,6 +157,50 @@ app.post('/api/addtoroster', async (req, res, next) =>
   
   });
 
+  app.get('/api/getroster', async (req, res, next) => {
+
+    //Incoming: userId, rosterId
+    //Outgoing: roster data -> player data in json, or error
+
+    const {userId, rosterId} = req.query; 
+    let error = ''; 
+    let rosterData = {};
+
+    try
+    {
+
+      const db = client.db(); 
+
+      const roster = await db.collection('Rosters').findOne({
+        _id: new ObjectId(rosterId), UserId:userId
+      }); 
+
+      if(!roster){
+        error = "Roster does not exist or access denied"; 
+      }else{
+        const players = await db.collection('Players').find({
+          _id:{$in: roster.players}
+        }).toArray(); 
+
+        rosterData = {
+
+          RosterName:roster.RosterName, 
+          players:players
+
+        }; 
+      }
+      
+    }
+    catch(e)
+    {
+      error = e.toString(); 
+    }
+
+    const ret = {error:error, roster:rosterData}; 
+    res.status(200).json(ret); 
+
+  });
+
 app.post('/api/register', async (req, res, next) =>
   {
     
