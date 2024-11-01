@@ -83,6 +83,49 @@ app.post('/api/newroster', async (req, res, next) =>{
 
 }); 
 
+app.post('/api/addtoroster', async (req, res, next) =>
+  {
+      //incoming: userId, rosterId, playerId
+      //outgoing: error
+      
+      const { userId, rosterId, playerId }= req.body; 
+      let error = ''; 
+
+      try
+      {
+
+        const db = client.db();
+
+        const result = await db.collection('Rosters').updateOne(
+          {_id: new ObjectId(rosterId), UserId:userId},
+          {$push:{players:playerId} }
+
+        ); 
+
+        if(result.matchedCount === 0){
+          error = "This roster does not exist."; 
+        }
+
+
+      }
+      catch(e)
+      {
+        error = e.toString(); 
+      }
+
+      const ret = {error:error}; 
+      res.status(200).json(ret); 
+  
+  
+  });
+    
+  app.post('/api/removefromroster', async (req, res, next) =>
+  {
+   
+    
+  
+  });
+
 app.post('/api/register', async (req, res, next) =>
   {
     
@@ -190,20 +233,6 @@ app.post('/api/login', async (req, res, next) =>
 
   var ret = { id:id, email:em, firstName:fn, lastName:ln, error:''};
   res.status(200).json(ret);
-});
-
-app.post('/api/addtoroster', async (req, res, next) =>
-{
-    
-
-
-});
-  
-app.post('/api/removefromroster', async (req, res, next) =>
-{
- 
-  
-
 });
 
 app.post('/api/searchplayer', async (req, res, next) =>
