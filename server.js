@@ -58,6 +58,31 @@ app.post('/api/addcard', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.post('/api/newroster', async (req, res, next) =>{
+
+  //incoming: userId, rosterName
+  //outgoing: error
+
+  const { userId, rosterName } = req.body; 
+
+  const newRoster = {RosterName:rosterName,UserId:userId,players:[]}; 
+  var error = ''; 
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('Rosters').insertOne(newRoster); 
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = {error:error}; 
+  res.status(200).json(ret); 
+
+}); 
+
 app.post('/api/register', async (req, res, next) =>
   {
     
