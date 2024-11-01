@@ -162,7 +162,7 @@ app.post('/api/addtoroster', async (req, res, next) =>
     //Incoming: userId, rosterId
     //Outgoing: roster data -> player data in json, or error
 
-    const {userId, rosterId} = req.query; 
+    const {userId, rosterId} = req.body; 
     let error = ''; 
     let rosterData = {};
 
