@@ -76,7 +76,17 @@ app.post('/api/register', async (req, res, next) =>
     {
 
       const db = client.db(); 
-      const result = db.collection('Users').insertOne(newUser); 
+      
+      const existingUser = await db.collection('Users').findOne({
+        $or: [{ Login: us }, { Email: em }]
+      });
+  
+      if (existingUser) {
+        error = 'Username or email already exists';
+      } else {
+        // Insert new user if no duplicates found
+        await db.collection('Users').insertOne(newUser); 
+      }
 
     }
     catch(e)
