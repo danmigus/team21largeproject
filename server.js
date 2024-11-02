@@ -18,6 +18,8 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+const {ObjectId} = require('mongodb');
+
 app.use((req, res, next) => 
   {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -57,6 +59,151 @@ app.post('/api/addcard', async (req, res, next) =>
   var ret = { error: error };
   res.status(200).json(ret);
 });
+
+app.post('/api/newroster', async (req, res, next) =>{
+
+  //incoming: userId, rosterName
+  //outgoing: error
+
+  const { userId, rosterName } = req.body; 
+
+  const newRoster = {RosterName:rosterName,UserId:userId,players:[]}; 
+  var error = ''; 
+
+  try
+  {
+    const db = client.db();
+    const result = db.collection('Rosters').insertOne(newRoster); 
+  }
+  catch(e)
+  {
+    error = e.toString();
+  }
+
+  var ret = {error:error}; 
+  res.status(200).json(ret); 
+
+}); 
+
+app.post('/api/addtoroster', async (req, res, next) =>
+  {
+      //incoming: userId, rosterId, playerId
+      //outgoing: error
+      
+      const { userId, rosterId, playerId }= req.body; 
+      let error = ''; 
+
+      try
+      {
+
+        const db = client.db();
+
+        const result = await db.collection('Rosters').updateOne(
+          {_id: new ObjectId(rosterId), UserId:userId},
+          {$push:{players:playerId} }
+
+        ); 
+
+        if(result.matchedCount === 0){
+          error = "This roster does not exist."; 
+        }
+
+
+      }
+      catch(e)
+      {
+        error = e.toString(); 
+      }
+
+      const ret = {error:error}; 
+      res.status(200).json(ret); 
+  
+  
+  });
+    
+  app.post('/api/removefromroster', async (req, res, next) =>
+    {
+      //incoming: userId, rosterId, playerId
+      //outgoing: error
+      
+      const { userId, rosterId, playerId }= req.body; 
+      let error = ''; 
+
+      try
+      {
+
+        const db = client.db();
+
+        const result = await db.collection('Rosters').updateOne(
+          {_id: new ObjectId(rosterId), UserId:userId},
+          {$pull:{players:playerId} }
+
+        ); 
+
+        if(result.matchedCount === 0){
+          error = "This roster does not exist."; 
+        }
+
+
+      }
+      catch(e)
+      {
+        error = e.toString(); 
+      }
+
+      const ret = {error:error}; 
+      res.status(200).json(ret); 
+  
+  
+  });
+
+  app.get('/api/getroster', async (req, res, next) => {
+
+    //Incoming: userId, rosterId
+    //Outgoing: roster data -> player data in json, or error
+
+    const {userId, rosterId} = req.body; 
+    let error = ''; 
+    let rosterData = {};
+
+    try
+    {
+
+      const db = client.db(); 
+
+      const roster = await db.collection('Rosters').findOne({
+        _id: new ObjectId(rosterId), UserId:userId
+      }); 
+
+      if(!roster){
+        error = "Roster does not exist or access denied"; 
+
+      }else{
+
+        const playerObjectIds = roster.players.map(id => new ObjectId(id));
+
+        const players = await db.collection('Players').find({
+          _id:{$in: playerObjectIds}
+        }).toArray(); 
+
+        rosterData = {
+
+          RosterName:roster.RosterName, 
+          players:players
+
+        }; 
+      }
+      
+    }
+    catch(e)
+    {
+      error = e.toString(); 
+    }
+
+    const ret = {error:error, roster:rosterData}; 
+    res.status(200).json(ret); 
+
+  });
 
 app.post('/api/register', async (req, res, next) =>
   {
@@ -165,20 +312,6 @@ app.post('/api/login', async (req, res, next) =>
 
   var ret = { id:id, email:em, firstName:fn, lastName:ln, error:''};
   res.status(200).json(ret);
-});
-
-app.post('/api/addtoroster', async (req, res, next) =>
-{
-    
-
-
-});
-  
-app.post('/api/removefromroster', async (req, res, next) =>
-{
- 
-  
-
 });
 
 app.post('/api/searchplayer', async (req, res, next) =>
