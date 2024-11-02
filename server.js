@@ -119,7 +119,7 @@ app.post('/api/addtoroster', async (req, res, next) =>
       res.status(200).json(ret); 
   
   
-  });
+});
     
   app.post('/api/removefromroster', async (req, res, next) =>
     {
@@ -155,9 +155,9 @@ app.post('/api/addtoroster', async (req, res, next) =>
       res.status(200).json(ret); 
   
   
-  });
+});
 
-  app.get('/api/getroster', async (req, res, next) => {
+app.get('/api/getroster', async (req, res, next) => {
 
     //Incoming: userId, rosterId
     //Outgoing: roster data -> player data in json, or error
@@ -203,7 +203,50 @@ app.post('/api/addtoroster', async (req, res, next) =>
     const ret = {error:error, roster:rosterData}; 
     res.status(200).json(ret); 
 
-  });
+});
+
+app.post('/api/searchplayer', async (req, res, next) => {
+
+  //incoming: search
+  //outgoing: playersData, error
+
+  const{ playername } = req.body; 
+  var error = ''; 
+  let playersData = []; 
+
+  try
+  {
+
+    const db = client.db(); 
+
+    playersData = await db.collection('Players').find({
+      player_name: {$regex: playerName, $options: 'i' }
+    }).project({
+      player_name: 1, 
+      player_team_id: 1, 
+      player_image_url: 1, 
+      rank_ecr: 1, 
+      player_position_id: 1
+
+    }).toArray(); 
+
+    if(playersData.length === 0){
+      error = "There are no players with that name. Please try again."; 
+    }
+
+  }
+  catch(e)
+  {
+    error = e.toString(); 
+  }
+
+  const ret = {error: error, players: playersData}; 
+  res.status(200).json(ret); 
+
+
+}); 
+
+
 
 app.post('/api/register', async (req, res, next) =>
   {
