@@ -210,7 +210,7 @@ app.post('/api/searchplayer', async (req, res, next) => {
   //incoming: search
   //outgoing: playersData, error
 
-  const{ playername } = req.body; 
+  const{ playerName } = req.body; 
   var error = ''; 
   let playersData = []; 
 
