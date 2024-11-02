@@ -82,7 +82,7 @@ function Verify()
             <div id="verifyResult">{verifyMessage}</div>
             <br></br>
             <div id="verifyPartOne">
-                <input type="text" id="verifyEmail" placeholder="Enter the email you want to verify" onChange={handleSetVerifyEmail} />
+                <input type="email" id="verifyEmail" placeholder="Enter the email you want to verify" onChange={handleSetVerifyEmail} />
                 <br></br>
                 <input type="submit" id="verifyEmailButton" className="buttons" value = "Submit" onClick={sendEmail}/>
                 <br></br>
