@@ -9,7 +9,6 @@ function Register()
     const [registerUsername,setLoginName] = React.useState('');
     const [registerPassword,setPassword] = React.useState('');
     const [registerEmail,setEmail] = React.useState('');
-    const [verificationToken, setVerificationToken] = React.useState('');
     const app_name = 'galaxycollapse.com';
 
     function buildPath(route:string) : string
@@ -48,11 +47,6 @@ function Register()
     {
       setPassword( e.target.value );
     }
-
-    function handleSetVerificationToken( e: any ) : void
-    {
-      setVerificationToken( e.target.value );
-    }
     
     async function doRegister(event:any) : Promise<void>
     {
@@ -84,10 +78,8 @@ function Register()
 
             let registrationForm = document.getElementById("registrationForm") as HTMLDivElement;
             registrationForm.style.display = "none";
-
-            let verificationForm = document.getElementById("verificationForm") as HTMLDivElement;
-            verificationForm.style.display = "block";
-            setMessage('📧 Please enter the verification token sent to your email 📧');
+            setMessage("Thank you. Please continue to verification ⬇️");
+            window.location.href="/verify";
         }
         catch(error:any)
         {
@@ -97,43 +89,11 @@ function Register()
         }    
     }   
 
-    async function doVerify(event:any) : Promise<void>
-    {
-        // Use api endpoint to connect to MongoDB and verify that the user entered the correct
-        // token. If so, set MongoDB's user flag to true. The user should be able to login.
-        
-        // Tweak Login.tsx so that only user's that have flag to true can log in. 
-
-        event.preventDefault();
-
-        var obj = {token: verificationToken, email: registerEmail};
-        var js = JSON.stringify(obj);
-
-        try
-        {    
-            const response = await fetch(buildPath("api/verify"),
-                {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
-  
-            var res = JSON.parse(await response.text());
-
-            if (res.error === '0')
-                setMessage('✅ Successful verification. Please return to login');
-            else
-                setMessage('❌ Unsuccessful verification');
-        }
-        catch(error:any)
-        {
-            setMessage('❌ Something went wrong...');
-            alert(error.toString());
-            return;
-        }    
-
-    }
-
     return(
         <div id="registerDiv"> 
             <div id="registrationForm">
                 <h1> Registration </h1>
+                <div id="registerResult">{registerMessage}</div>
                 <br></br>
                 <input type="text" id="registerFirstName" placeholder="Enter first name here" onChange={handleSetRegisterFirstName} />
                 <br></br>
@@ -148,16 +108,10 @@ function Register()
                 <input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={doRegister}/>
                 <br></br>
             </div>
-            <div id="verificationForm" style={{display: "none"}}>
-                <h1> Verify </h1>
-                <br></br>
-                <input type="text" id="verifyToken" placeholder="Enter verification token here" onChange={handleSetVerificationToken} />
-                <br></br>
-                <input type="submit" id="verifyButton" className="buttons" value = "Submit" onClick={doVerify}/>
-            </div>
+            <br></br>
+            <Link to="/verify" className="verifyPage">Go to verification</Link>
             <br></br>
             <Link to="/" className="returnLink">Return to Login</Link>
-            <div id="registerResult">{registerMessage}</div>
         </div>
     );
 };
