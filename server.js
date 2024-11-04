@@ -204,47 +204,54 @@ app.get('/api/getrosters', async (req, res, next) => {
   const ret = { error: error, rosters: rostersData };
   res.status(200).json(ret);
 });
+
 app.post('/api/searchplayer', async (req, res, next) => {
 
-  //incoming: search
-  //outgoing: playersData, error
+  // incoming: search, optional position, optional team
+  // outgoing: playersData, error
 
-  const{ playerName } = req.body; 
-  var error = ''; 
-  let playersData = []; 
+  let { playerName, position, team } = req.body;
+  let error = ''; 
+  let playersData = [];
 
   try
   {
+    if (!playerName) playerName = '';
+    const db = client.db();
 
-    const db = client.db(); 
+    // Build the search query with conditional filters
+    let query = {
+      player_name: { $regex: playerName, $options: 'i' }
+    };
 
-    playersData = await db.collection('Players').find({
-      player_name: {$regex: playerName, $options: 'i' }
-    }).project({
+    // Add position and team filters if specified
+    if (position) {
+      query.player_position_id = position;
+    }
+    if (team) {
+      query.player_team_id = team;
+    }
+
+    playersData = await db.collection('Players').find(query).project({
       player_name: 1, 
       player_team_id: 1, 
       player_image_url: 1, 
       rank_ecr: 1, 
       player_position_id: 1
+    }).toArray();
 
-    }).toArray(); 
-
-    if(playersData.length === 0){
-      error = "There are no players with that name. Please try again."; 
+    if (playersData.length === 0) {
+      error = "There are no players matching the search criteria.";
     }
-
   }
   catch(e)
   {
     error = e.toString(); 
   }
 
-  const ret = {error: error, players: playersData}; 
+  const ret = { error: error, players: playersData }; 
   res.status(200).json(ret); 
-
-
-}); 
-
+});
 
 
 app.post('/api/register', async (req, res, next) =>
