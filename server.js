@@ -267,6 +267,12 @@ app.post('/api/register', async (req, res, next) =>
 
     const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em, Token: generatedToken, VerificationFlag: verificationFlag}; 
     var error = '';
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
+    if (!emailRegex.test(em)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
     
     try
     {
