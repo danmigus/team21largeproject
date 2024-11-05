@@ -1,8 +1,37 @@
+html {
+  background-image: url("../src/assets/background2.png"); 
+
+  background-size: cover;
+}
+
+input {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  width: 300px;
+  height: 30px;
+  padding: 5px;
+  margin: 5px;
+  background-color:beige;
+  color:rgb(41, 39, 39);
+  border-radius: 2px;
+  border: 1px;
+}
+
+#loginDiv{
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  filter: drop-shadow(0 0 1rem rgb(41, 55, 58));
+  border-radius: 5px;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+
+.football-logo{
+  filter: drop-shadow(0 0 1rem rgb(41, 62, 63));
 }
 
 .logo {

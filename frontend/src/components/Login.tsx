@@ -67,7 +67,7 @@ function Login()
 
     return(
       <div id="loginDiv">
-        <span id="inner-title">PLEASE LOG IN</span><br />
+        <h3>L O G I N</h3>
         <input type="text" id="loginName" placeholder="Username" onChange={handleSetLoginName} />
         <br></br><input type="password" id="loginPassword" placeholder="Password" onChange={handleSetPassword} />
         <br></br><input type="submit" id="loginButton" className="buttons" value = "Login"

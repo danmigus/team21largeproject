@@ -94,7 +94,7 @@ function Register()
     return(
         <div id="registerDiv"> 
             <div id="registrationForm">
-                <h1> Registration </h1>
+                <h1> Registration 📝</h1>
                 <div id="registerResult">{registerMessage}</div>
                 <br></br>
                 <input type="text" id="registerFirstName" placeholder="Enter first name here" onChange={handleSetRegisterFirstName} />

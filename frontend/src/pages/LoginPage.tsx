@@ -6,7 +6,7 @@ const LoginPage = () =>
 
     return(
       <div>
-        <img src="./src/assets/football.JPG"></img>
+        <img className="football-logo"src="./src/assets/football.JPG"></img>
         {/*<PageTitle />*/}
         <Login />
       </div>
