@@ -1,5 +1,7 @@
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
+const secretKey = process.env.SECRET_KEY;
+console.log(secretKey);
 
 const ourTime = new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'});
 console.log("Server restarted: " + ourTime);
@@ -253,6 +255,36 @@ app.post('/api/searchplayer', async (req, res, next) => {
   res.status(200).json(ret); 
 });
 
+app.post('/api/resend', async (req, res, next) =>
+  {
+    const { email } = req.body;
+
+    const jwt = require('jsonwebtoken');
+    const token = jwt.sign({ email }, `${secretKey}`, { expiresIn: '15m'});
+    console.log("New encoded token:" + token);
+    const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}`;
+
+    // TODO send email
+
+    var error = '';
+  
+    try
+    {
+      const db = client.db(); 
+      
+      const updateToken = await db.collection('Users').updateOne({Email: email}, {$set: {Token: token}})
+  
+      error = "Updated Token";
+    }
+    catch(e)
+    {
+      error = e.toString(); 
+    }
+
+    var ret = { error : error };
+    res.status(200).json(ret);  
+
+  });
 
 app.post('/api/register', async (req, res, next) =>
   {
@@ -260,14 +292,20 @@ app.post('/api/register', async (req, res, next) =>
     // incoming: login, password, firstName, lastName, email
     // outgoing: error 
 
-    const { us, pass, f, l , em, token} = req.body; 
-    const c = require('crypto');
-    let generatedToken = c.randomBytes(16).toString("hex");
+    const { us, pass, f, l , em} = req.body; 
+
+    const jwt = require('jsonwebtoken');
+    const token = jwt.sign({ em }, `${secretKey}`, { expiresIn: '15m'});
+    console.log("Encoded token:" + token);
+    const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}`;
+
     let verificationFlag = false;
 
-    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em, Token: generatedToken, VerificationFlag: verificationFlag}; 
+    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em, Token: token, VerificationFlag: verificationFlag}; 
     var error = '';
 
+    // TODO call send email
+    
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
     if (!emailRegex.test(em)) {
@@ -303,29 +341,28 @@ app.post('/api/register', async (req, res, next) =>
 
   });
 
-app.post('/api/verify', async (req, res, next) =>
+app.get('/api/verify', async (req, res, next) =>
   {
     var error = '';
+	  const jwt = require('jsonwebtoken');
     try
     {
       const db = client.db(); 
-      const results = await db.collection('Users').find({Email: req.body.email}).toArray();
 
-      // (Server-side generated token === token sent by user in frontend)
-      if (results[0].Token === req.body.token)
-      {
-        const changeFlag = await db.collection('Users').updateOne({Email: req.body.email}, {$set: {VerificationFlag: true}})
-        error = '0';
-      }
+      const decodedToken = jwt.verify(req.query.token, secretKey);
+      
+      const changeFlag = await db.collection('Users').updateOne({Email: decodedToken.em}, {$set: {VerificationFlag: true}})
+      error = 'Successfully verified email';
     }
 
     catch(e)
     {
       error = e.toString(); 
+      console.error("Failed token verification");
     }
   
-    var ret = { error:error};
-    res.status(200).json(ret);  
+    //var ret = { error:error};
+    res.status(200).send(error);  
   
   });
   

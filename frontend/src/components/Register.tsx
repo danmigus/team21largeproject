@@ -78,8 +78,10 @@ function Register()
 
             let registrationForm = document.getElementById("registrationForm") as HTMLDivElement;
             registrationForm.style.display = "none";
-            setMessage("Thank you. Please continue to verification ⬇️");
-            window.location.href="/verify";
+            setMessage("Please click the link in your email.");
+            let thanksMessage = document.getElementById("thanksMessage") as HTMLDivElement;
+            thanksMessage.style.display = "block";
+            
         }
         catch(error:any)
         {
@@ -108,8 +110,7 @@ function Register()
                 <input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={doRegister}/>
                 <br></br>
             </div>
-            <br></br>
-            <Link to="/verify" className="verifyPage">Go to verification</Link>
+            <h2 id="thanksMessage" style={{display: "none"}}>Thank you. Please check your email for the verification link.</h2>
             <br></br>
             <Link to="/" className="returnLink">Return to Login</Link>
         </div>

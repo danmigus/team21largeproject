@@ -74,6 +74,8 @@ function Login()
           onClick={doLogin} />
         <br></br> <br></br>
         <Link to="/register" className="registerLink">Register Now</Link>
+        <br></br>
+        <Link to="/verify" className="verifyPage">Resend Email Verification</Link>
         <div id="loginResult">{message}</div>
      </div>
     );
