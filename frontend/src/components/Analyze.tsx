@@ -12,6 +12,8 @@ function Analyze()
     // Usestate stuff.
     const [message,setMessage] = useState('');
     const [playerName, setSearchText] = useState('');
+    const [position, setSearchPosition] = useState('');
+    const [team, setSearchTeam] = useState('');
     const [searchResults,setResults] = useState([
         {
             _id: "",
@@ -41,6 +43,16 @@ function Analyze()
         setSearchText( e.target.value );
     }
 
+    function handleSearchPosition ( e: any ) : void
+    {
+        setSearchPosition (e.target.value);
+    }
+
+    function handleSearchTeam ( e : any ) : void
+    {
+        setSearchTeam (e.target.value);
+    }
+
     async function doLogout(event:any) : Promise<void>
     {
         event.preventDefault();
@@ -54,17 +66,18 @@ function Analyze()
     {
         event.preventDefault();
 
-        let obj = {playerName};
+        let obj = {playerName, position, team};
         let js = JSON.stringify(obj);
 
         try
         {
+            setMessage("Searching... 🤔")
             const response = await fetch(buildPath("api/searchplayer"),
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
   
             var res = JSON.parse(await response.text());
 
-            setMessage("Search completed");
+            setMessage("Search completed 🤓");
             setResults(res.players);
         }
 
@@ -84,22 +97,39 @@ function Analyze()
             <div id="result">{message}</div>
             <br></br>
 
-            <span style={{border: "solid 1px", padding:"20px"}}>
-                <span>Search</span> 
-                <span><input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} /></span>
-                <span><input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={searchPlayers}/></span>
-            </span>
-            <div id="dragHere" style={{border: "dotted 5px", marginLeft:"100%", width: "200px", height: "50px"}}>
-                    Drag Here
-            </div>
+            <div style={{border: "solid 1px", padding:"20px", float: "left"}}>
+                <div>Search: </div> 
+                <div><input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} /></div>
+                <select style={{float: "left"}} onChange={handleSearchPosition}>
+                    <option value=""> Position </option>
+                    <option>QB</option>
+                    <option>WR</option>
+                    <option>RB</option>
+                    <option>TE</option>
+                </select>
+                <input style={{float: "left", height: "10px", width: "100px"}} type="text" id="searchTeam" placeholder="Team" onChange={handleSearchTeam} />
 
-            <div id="searchResults">
-                <ul style={{border: "solid 1px"}}>
+                <div><input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={searchPlayers}/></div>
+
+                <div id="searchResults" style={{float: "left"}}>
+                <ul style={{border: "solid 1px", padding: "1px"}}>
                     {searchResults.map((info) => (
-                    <div draggable style={{border: "solid 2px green", width: "30%", cursor: "grab", padding: "3px"}} key = {info.player_name}>{info.player_name}</div>
+                        <li draggable style={{border: "solid 2px green", cursor: "grab", padding: "3px", margin:"2px"}} 
+                        key={info.player_name}>
+                            [{info.player_position_id}, {info.player_team_id}] <img alt="[player img]" style={{width: "10%"}} src={info.player_image_url}></img> {info.player_name}
+                        </li>
                     ))}
                 </ul>
+                </div>
             </div>
+
+
+
+            <div id="dragHere" style={{border: "dotted 5px", width: "200px", height: "500px", float: "left", textAlign: "center"}}>
+                <h4>Drag Here</h4>
+            </div>
+
+
         </div>
     );
 };
