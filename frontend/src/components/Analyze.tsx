@@ -114,8 +114,7 @@ function Analyze()
                 <div id="searchResults" style={{float: "left"}}>
                 <ul style={{border: "solid 1px", padding: "1px"}}>
                     {searchResults.map((info) => (
-                        <li draggable style={{border: "solid 2px green", cursor: "grab", padding: "3px", margin:"2px"}} 
-                        key={info.player_name}>
+                        <li draggable style={{border: "solid 2px green", cursor: "grab", padding: "3px", margin:"2px"}} >
                             [{info.player_position_id}, {info.player_team_id}] <img alt="[player img]" style={{width: "10%"}} src={info.player_image_url}></img> {info.player_name}
                         </li>
                     ))}
