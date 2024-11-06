@@ -79,8 +79,8 @@ function Analyze()
         setPlayerCards([...playerCard, card]);
 
         console.log("Adding: " + (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)).toFixed(2));
-        let newEcr:Number = (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)).toFixed(2) + Number(ecr);
-        handleEcr(newEcr.toString());
+        let newEcr:Number = (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)) + Number(ecr);
+        handleEcr(newEcr.toFixed(2));
     }
 
     async function doLogout(event:any) : Promise<void>
