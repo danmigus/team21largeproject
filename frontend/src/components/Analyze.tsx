@@ -14,6 +14,8 @@ function Analyze()
     const [playerName, setSearchText] = useState('');
     const [position, setSearchPosition] = useState('');
     const [team, setSearchTeam] = useState('');
+    const [playerCard, setPlayerCards] = useState<string[]>([]);
+    const [ecr, setEcr] = useState('');
     const [searchResults,setResults] = useState([
         {
             _id: "",
@@ -43,6 +45,11 @@ function Analyze()
         setSearchText( e.target.value );
     }
 
+    function handleEcr( ecr:string ) : void
+    {
+        setEcr(ecr);
+    }
+
     function handleSearchPosition ( e: any ) : void
     {
         setSearchPosition (e.target.value);
@@ -51,6 +58,29 @@ function Analyze()
     function handleSearchTeam ( e : any ) : void
     {
         setSearchTeam (e.target.value);
+    }
+
+    function handleDragHere (e: React.DragEvent) 
+    {
+        e.preventDefault();
+    }
+
+    function handleDrag (e: React.DragEvent, card:any)
+    {
+        e.dataTransfer.setData("card", JSON.stringify(card));
+        console.log("Starting drag");
+        console.log(card);
+    }
+
+    function handleDrop (e: React.DragEvent)
+    {
+        const card = e.dataTransfer.getData("card") as string;
+        console.log(card);
+        setPlayerCards([...playerCard, card]);
+
+        console.log("Adding: " + JSON.parse(card).rank_ecr);
+        let newEcr:Number = JSON.parse(card).rank_ecr + Number(ecr);
+        handleEcr(newEcr.toString());
     }
 
     async function doLogout(event:any) : Promise<void>
@@ -65,6 +95,8 @@ function Analyze()
     async function searchPlayers(event:any) : Promise<void>
     {
         event.preventDefault();
+        let revealResults = document.getElementById("searchResults") as HTMLDivElement;
+        revealResults.style.display = "block";
 
         let obj = {playerName, position, team};
         let js = JSON.stringify(obj);
@@ -78,6 +110,9 @@ function Analyze()
             var res = JSON.parse(await response.text());
 
             setMessage("Search completed 🤓");
+            setTimeout(() => {
+                setMessage("");
+            }, 2000);
             setResults(res.players);
         }
 
@@ -111,11 +146,11 @@ function Analyze()
 
                 <div><input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={searchPlayers}/></div>
 
-                <div id="searchResults" style={{float: "left"}}>
-                <ul style={{border: "solid 1px", padding: "1px"}}>
+                <div id="searchResults" style={{float: "left", display:"none"}}>
+                <ul style={{padding: "1px"}}>
                     {searchResults.map((info) => (
-                        <li draggable style={{border: "solid 2px green", cursor: "grab", padding: "3px", margin:"2px"}} >
-                            [{info.player_position_id}, {info.player_team_id}] <img alt="[player img]" style={{width: "10%"}} src={info.player_image_url}></img> {info.player_name}
+                        <li className="card" draggable onDragStart= {(e) => handleDrag(e, info)}>
+                            [{info.player_position_id}, {info.player_team_id}] <img alt="[player img]" draggable="false" style={{width: "10%", border:"0.5px white solid"}} src={info.player_image_url}></img> {info.player_name}
                         </li>
                     ))}
                 </ul>
@@ -123,11 +158,17 @@ function Analyze()
             </div>
 
 
+            <div style={{float: "left"}}>
+                <h2> Total ECR: {ecr} </h2>
 
-            <div id="dragHere" style={{border: "dotted 5px", width: "200px", height: "500px", float: "left", textAlign: "center"}}>
-                <h4>Drag Here</h4>
+                <div id="dragHere" onDrop={handleDrop} onDragOver={handleDragHere} style={{border: "dotted 5px", width: "500px", height: "500px", float: "left", textAlign: "center"}}>
+                    {playerCard.map((card) => (
+                        <div className="card" style={{cursor: "pointer"}}>
+                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}] <img alt="[player img]" draggable="false" style={{width: "10%", border:"0.5px white solid"}} src={JSON.parse(card).player_image_url}></img> {JSON.parse(card).player_name} 
+                        </div>
+                    ))}
+                </div>
             </div>
-
 
         </div>
     );
