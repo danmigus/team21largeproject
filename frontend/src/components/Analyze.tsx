@@ -78,8 +78,8 @@ function Analyze()
         console.log(card);
         setPlayerCards([...playerCard, card]);
 
-        console.log("Adding: " + JSON.parse(card).rank_ecr);
-        let newEcr:Number = JSON.parse(card).rank_ecr + Number(ecr);
+        console.log("Adding: " + (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)));
+        let newEcr:Number = (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)) + Number(ecr);
         handleEcr(newEcr.toString());
     }
 
