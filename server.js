@@ -1,7 +1,7 @@
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 const secretKey = process.env.SECRET_KEY;
-console.log(secretKey);
+const sendGridKey = process.env.SENDGRID;
 
 const ourTime = new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'});
 console.log("Server restarted: " + ourTime);
@@ -37,6 +37,31 @@ app.use((req, res, next) =>
   });
   
 app.listen(5000); // start Node + Express server on port 5000 ////
+
+async function sendEmail (req, res, next) {
+
+  const { email, tokenUrl } = req.body;
+  const sgMail = require('@sendgrid/mail');
+  sgMail.setApiKey(sendGridKey);
+  const msg = 
+  {
+    to: email, // Change to your recipient
+    from: 'cop4331team22@gmail.com', // Change to your verified sender
+    subject: 'Verify your Trade Wizard Account',
+    text: "Some text",
+    html: tokenUrl,
+  };
+
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log('Email sent')
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
+
 
 app.post('/api/addcard', async (req, res, next) =>
 {
@@ -264,7 +289,8 @@ app.post('/api/resend', async (req, res, next) =>
     console.log("New encoded token:" + token);
     const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}`;
 
-    // TODO send email
+    req.body = { email: email, tokenUrl: tokenUrl};
+    await sendEmail(req, res);
 
     var error = '';
   
@@ -304,7 +330,8 @@ app.post('/api/register', async (req, res, next) =>
     const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em, Token: token, VerificationFlag: verificationFlag}; 
     var error = '';
 
-    // TODO call send email
+    req.body = {email: em, tokenUrl: tokenUrl};
+    await sendEmail(req, res);
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
