@@ -75,6 +75,49 @@ ul {
   border-image: url("../src/assets/purple-fire.gif") 55;
 }
 
+.playerImage {
+  width: 10%;
+  border: 0.5px white solid;
+}
+
+.selectDiv {
+  border: solid 1px; 
+  padding: 20px;
+  float: left;
+}
+
+.selectPosition {
+  float: left;
+}
+
+.searchTeam {
+  float: left; 
+  height: 10px; 
+  width: 100px;
+}
+
+.dragHereDiv {
+  float: left;
+}
+
+.dragHereBox {
+  border: dotted 5px;
+  width: 500px ;
+  height: 500px;
+  float: left;
+  text-align: center;
+}
+
+.playerImage {
+  width: 10%; 
+  border:0.5px white solid;
+}
+
+#searchResults {
+  float: left; 
+  display:none;
+}
+
 .read-the-docs {
   color: #888;
 }

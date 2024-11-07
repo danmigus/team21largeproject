@@ -131,25 +131,25 @@ function Analyze()
             <div id="result">{message}</div>
             <br></br>
 
-            <div style={{border: "solid 1px", padding:"20px", float: "left"}}>
+            <div className="selectDiv">
                 <div>Search: </div>
                 <div><input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} /></div>
-                <select style={{float: "left"}} onChange={handleSearchPosition}>
+                <select className="selectPosition" onChange={handleSearchPosition}>
                     <option value=""> Position </option>
                     <option>QB</option>
                     <option>WR</option>
                     <option>RB</option>
                     <option>TE</option>
                 </select>
-                <input style={{float: "left", height: "10px", width: "100px"}} type="text" id="searchTeam" placeholder="Team" onChange={handleSearchTeam} />
+                <input type="text" className="searchTeam" placeholder="Team" onChange={handleSearchTeam} />
 
-                <div><input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={searchPlayers}/></div>
+                <div><input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/></div>
 
-                <div id="searchResults" style={{float: "left", display:"none"}}>
+                <div id="searchResults">
                 <ul style={{padding: "1px"}}>
                     {searchResults.map((info) => (
                         <li className="card" draggable onDragStart= {(e) => handleDrag(e, info)}>
-                            [{info.player_position_id}, {info.player_team_id}] <img alt="[player img]" draggable="false" style={{width: "10%", border:"0.5px white solid"}} src={info.player_image_url}></img> {info.player_name}
+                            [{info.player_position_id}, {info.player_team_id}] <img className="playerImage" alt="[player img]" draggable="false" src={info.player_image_url}></img> {info.player_name}
                         </li>
                     ))}
                 </ul>
@@ -157,13 +157,13 @@ function Analyze()
             </div>
 
 
-            <div style={{float: "left"}}>
+            <div className="dragHereDiv">
                 <h2> Total ECR: {ecr} </h2>
 
-                <div id="dragHere" onDrop={handleDrop} onDragOver={handleDragHere} style={{border: "dotted 5px", width: "500px", height: "500px", float: "left", textAlign: "center"}}>
+                <div className="dragHereBox" onDrop={handleDrop} onDragOver={handleDragHere}>
                     {playerCard.map((card) => (
                         <div className="card" style={{cursor: "pointer"}}>
-                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}] <img alt="[player img]" draggable="false" style={{width: "10%", border:"0.5px white solid"}} src={JSON.parse(card).player_image_url}></img> {JSON.parse(card).player_name}
+                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}] <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img> {JSON.parse(card).player_name}
                         </div>
                     ))}
                 </div>
