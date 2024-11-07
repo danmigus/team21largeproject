@@ -409,7 +409,6 @@ app.post('/api/login', async (req, res, next) =>
     var fn = '';
     var ln = '';
     var em = '';
-    
 
     if( results.length > 0 )
     {
