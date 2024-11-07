@@ -2,14 +2,28 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AnalyzePage extends HookWidget {
+  // Declare the function before useEffect
+  Future<void> fetchUserData(ValueNotifier<Map<String, dynamic>> userData) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? storedData = prefs.getString('user_data');
+    if (storedData != null) {
+      userData.value = jsonDecode(storedData);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Local storage handling
-    final userData = jsonDecode(localStorage.getItem('user_data') ?? '{}');
-    final userFirstName = userData['firstName'] ?? '';
-    final userLastName = userData['lastName'] ?? '';
+    // Fetch user data from shared_preferences
+    final userData = useState<Map<String, dynamic>>({});
+
+    // Run the function to fetch the user data on widget build
+    useEffect(() {
+      fetchUserData(userData); // Correctly call the function now
+      return null;
+    }, []); // Only run once when the widget is created
 
     // State variables (equivalent to useState in React)
     final message = useState('');
@@ -48,14 +62,12 @@ class AnalyzePage extends HookWidget {
 
     Future<void> doLogout() async {
       message.value = "Logging out...";
-      localStorage.clear();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();  // Clears all saved preferences
       Navigator.pushReplacementNamed(context, '/');
     }
 
     Future<void> searchPlayers() async {
-      final revealResults = context.findAncestorRenderObjectOfType<RenderBox>();
-      revealResults?.style?.setDisplay('block');
-
       final obj = {
         'playerName': playerName.value,
         'position': position.value,
@@ -96,7 +108,7 @@ class AnalyzePage extends HookWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Welcome, $userFirstName $userLastName 👋😃'),
+        title: Text('Welcome, ${userData.value['firstName']} ${userData.value['lastName']} 👋😃'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
