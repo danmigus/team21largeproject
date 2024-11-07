@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-
 function Analyze()
 {
     // Local storage stuff.
@@ -19,10 +18,10 @@ function Analyze()
     const [searchResults,setResults] = useState([
         {
             _id: "",
-            player_name: "", 
-            player_team_id: "", 
-            player_image_url: "", 
-            rank_ecr: "", 
+            player_name: "",
+            player_team_id: "",
+            player_image_url: "",
+            rank_ecr: "",
             player_position_id: ""
         }
     ]);
@@ -60,7 +59,7 @@ function Analyze()
         setSearchTeam (e.target.value);
     }
 
-    function handleDragHere (e: React.DragEvent) 
+    function handleDragHere (e: React.DragEvent)
     {
         e.preventDefault();
     }
@@ -106,7 +105,7 @@ function Analyze()
             setMessage("Searching... 🤔")
             const response = await fetch(buildPath("api/searchplayer"),
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
-  
+
             var res = JSON.parse(await response.text());
 
             setMessage("Search completed 🤓");
@@ -133,7 +132,7 @@ function Analyze()
             <br></br>
 
             <div style={{border: "solid 1px", padding:"20px", float: "left"}}>
-                <div>Search: </div> 
+                <div>Search: </div>
                 <div><input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} /></div>
                 <select style={{float: "left"}} onChange={handleSearchPosition}>
                     <option value=""> Position </option>
@@ -164,7 +163,7 @@ function Analyze()
                 <div id="dragHere" onDrop={handleDrop} onDragOver={handleDragHere} style={{border: "dotted 5px", width: "500px", height: "500px", float: "left", textAlign: "center"}}>
                     {playerCard.map((card) => (
                         <div className="card" style={{cursor: "pointer"}}>
-                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}] <img alt="[player img]" draggable="false" style={{width: "10%", border:"0.5px white solid"}} src={JSON.parse(card).player_image_url}></img> {JSON.parse(card).player_name} 
+                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}] <img alt="[player img]" draggable="false" style={{width: "10%", border:"0.5px white solid"}} src={JSON.parse(card).player_image_url}></img> {JSON.parse(card).player_name}
                         </div>
                     ))}
                 </div>

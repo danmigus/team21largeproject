@@ -1,0 +1,28 @@
+.button {
+  all: unset;
+  position: relative;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  user-select: none;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.underline {
+  position: absolute;
+  bottom: 0;
+  width: calc(100% - 1rem);
+  height: 0.5rem;
+  background-color: white;
+  animation: intro 0.2s;
+  transform-origin: 0 50%;
+}
+
+@keyframes intro {
+  0% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+

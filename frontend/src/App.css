@@ -1,7 +1,6 @@
-html {
-  background-image: url("../src/assets/background2.png"); 
-
-  background-size: cover;
+* {
+  margin: 0;
+  box-sizing: border-box;
 }
 
 input {
@@ -28,10 +27,6 @@ ul {
 }
 
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
 }
 
 .football-logo{
