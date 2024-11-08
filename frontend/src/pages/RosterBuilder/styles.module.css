@@ -1,0 +1,40 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  height: 100%;
+}
+
+.builderContainer {
+  display: flex;
+  height: 100%;
+}
+
+.divider {
+  height: 100%;
+  width: 0.75rem;
+  margin: 0 4rem;
+  background-color: #FFFFFF88;
+}
+
+.builderSide {
+  flex: 1;
+  height: 100%;
+
+  & h3 {
+    font-size: 2.5rem;
+  }
+}
+
+.sideHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sideControls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+

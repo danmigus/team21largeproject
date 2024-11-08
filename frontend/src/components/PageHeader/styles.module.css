@@ -1,0 +1,26 @@
+.headerContainer {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+
+  & p {
+    font-weight: bold;
+    font-size: 1.25rem;
+    max-width: 13rem;
+  }
+}
+
+.headerBkg {
+  background: linear-gradient(-90deg, #E67272, #C87777);
+  padding: 0.5rem;
+}
+
+.header {
+  padding: 0rem 2rem;
+  background: linear-gradient(-90deg, #A82F2F, #DB2525);
+
+  & h2 {
+    font-size: 4rem;
+    font-weight: bold;
+  }
+}

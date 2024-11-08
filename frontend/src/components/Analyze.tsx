@@ -1,12 +1,9 @@
 import { useState } from 'react';
+import {useUserInfo} from "../util/userUtil.ts";
 
 function Analyze()
 {
-    // Local storage stuff.
-    let _ud : any = localStorage.getItem('user_data');
-    let ud = JSON.parse( _ud );
-    let userFirstName:string = ud.firstName;
-    let userLastName:string = ud.lastName;
+    const { firstName: userFirstName, lastName: userLastName, logoutUser: doLogout } = useUserInfo()
 
     // Usestate stuff.
     const [message,setMessage] = useState('');
@@ -82,15 +79,6 @@ function Analyze()
         handleEcr(newEcr.toFixed(2));
     }
 
-    async function doLogout(event:any) : Promise<void>
-    {
-        event.preventDefault();
-
-        setMessage("Logging out...");
-        localStorage.clear();
-        window.location.href = '/';
-    }
-
     async function searchPlayers(event:any) : Promise<void>
     {
         event.preventDefault();
@@ -125,9 +113,6 @@ function Analyze()
 
     return(
         <div>
-            <h1>Welcome, {userFirstName} {userLastName} 👋😃</h1>
-            <input type="submit" id="logoutButton" className="buttons" value = "Logout" onClick={doLogout}/>
-            <br></br>
             <div id="result">{message}</div>
             <br></br>
 

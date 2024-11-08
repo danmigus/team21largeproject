@@ -27,6 +27,7 @@ ul {
 }
 
 #root {
+  min-height: 100vh;
 }
 
 .football-logo{
@@ -81,7 +82,7 @@ ul {
 }
 
 .selectDiv {
-  border: solid 1px; 
+  border: solid 1px;
   padding: 20px;
   float: left;
 }
@@ -91,8 +92,8 @@ ul {
 }
 
 .searchTeam {
-  float: left; 
-  height: 10px; 
+  float: left;
+  height: 10px;
   width: 100px;
 }
 
@@ -109,12 +110,12 @@ ul {
 }
 
 .playerImage {
-  width: 10%; 
+  width: 10%;
   border:0.5px white solid;
 }
 
 #searchResults {
-  float: left; 
+  float: left;
   display:none;
 }
 

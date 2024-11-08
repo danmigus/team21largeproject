@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage';
 import ResendPage from './pages/ResendPage';
 import AnalyzePage from './pages/AnalyzePage';
 import RootLayout from "./layouts/root/RootLayout.tsx";
+import RosterBuilder from "./pages/RosterBuilder/RosterBuilder.tsx";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/" element={<RootLayout />}>
           <Route path="/cards" element={<CardPage />} />
           <Route path="/analyze" element={<AnalyzePage />} />
+          <Route path="/roster-builder" element={<RosterBuilder />} />
         </Route>
 
       </Routes>
