@@ -186,6 +186,7 @@ function Analyze()
     return(
         <div>
             <div id="result">Status: {message}</div>
+            <div style={{textAlign:"center"}}className="rainbow-text">You gain: {(Number(rosterEcr)-Number(searchEcr)).toFixed(2)} </div>
             <br></br>
             
             <div className="searchDiv">
@@ -212,10 +213,8 @@ function Analyze()
                 </div>
             </div>
 
-
             <div className="dragHereDiv">
                 <h2> Search Value: {searchEcr} </h2>
-
                 <div className="dragHereBox" onDrop={handleFromSearchDrop} onDragOver={handleDragHere}>
                     {searchPlayersArray.map((card) => (
                         <div className="card" style={{cursor: "pointer"}}>
@@ -227,7 +226,6 @@ function Analyze()
 
             <div className="dragHereDiv">
                 <h2> Your Value: {rosterEcr} </h2>
-
                 <div className="dragHereBox" onDrop={handleFromRosterDrop} onDragOver={handleDragHere}>
                     {rosterPlayersArray.map((card) => (
                         <div className="card" style={{cursor: "pointer"}}>
@@ -250,6 +248,7 @@ function Analyze()
                     ))}
                 </div>
             </div>
+            <br></br>
         </div>
     );
 };
