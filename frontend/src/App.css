@@ -137,6 +137,28 @@ ul {
   display:none;
 }
 
+.roster {
+  border: solid white 2px;
+  cursor: pointer;
+  padding: 5px;
+  margin: 10px;
+}
+
+@keyframes rainbow {
+  0% { color: rgb(255, 140, 140); }
+  20% { color: orange; }
+  40% { color: yellow; }
+  60% { color: rgb(149, 255, 117); }
+  80% { color: rgb(0, 255, 234); }
+  100% { color: violet; }
+}
+
+.rainbow-text {
+  font-size: 30px;
+  font-weight: bold;
+  animation: rainbow 7s linear infinite;
+}
+
 .read-the-docs {
   color: #888;
 }

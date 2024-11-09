@@ -1,9 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {useUserInfo} from "../util/userUtil.ts";
 
 function Analyze()
 {
     const { firstName: userFirstName, lastName: userLastName, logoutUser: doLogout } = useUserInfo()
+
+    const userData:any = localStorage.getItem("user_data")
+    const userId:string = JSON.parse(userData).id;
+
+    const [rosters, setRosters] = useState<any[]>([
+        {
+            RosterName: "",
+            players: []
+        }
+    ]);
+    useEffect(() => {
+        async function mount () {
+            try
+            {
+                const loadedRosters = await loadRosters();
+                setRosters(loadedRosters);
+            }
+            catch(error:any )
+            {   
+                console.log(error);
+            }
+        }
+        mount();
+    },[]);
 
     const [message,setMessage] = useState('');
     const [playerName, setSearchText] = useState('');
@@ -96,6 +120,11 @@ function Analyze()
         handleRosterEcr(newEcr.toFixed(2));
     }
 
+    function hideRosterList ()
+    {
+        document.getElementById("rosterList")!.style.display = "none";
+    }
+
     async function searchPlayers(event:any) : Promise<void>
     {
         event.preventDefault();
@@ -125,6 +154,32 @@ function Analyze()
             setMessage('❌ Search went wrong...');
             alert(error.toString());
             return;
+        }
+    }
+
+    async function loadRosters() : Promise<any[]>
+    {
+        let obj = { userId };
+        let js = JSON.stringify(obj);
+
+        try
+        {
+            const response = await fetch(buildPath("api/getrosters"),
+            {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
+
+            var res = JSON.parse(await response.text());
+            return res.rosters;
+        }
+
+        catch (error:any)
+        {
+            console.log(error.toString());
+            return[
+                {
+                    RosterName: "error",
+                    players: []
+                }
+            ]
         }
     }
 
@@ -184,9 +239,17 @@ function Analyze()
 
             <div className="userRosters">
                 <h2>Your Rosters 🏈</h2>
-
+                <br></br>
+                <hr></hr>
+                <br></br>
+                <div id="rosterList">
+                    {rosters.map((roster) => (
+                        <div className="roster" onClick={hideRosterList}>
+                            <h3>{roster.RosterName} ➤ </h3>
+                        </div>
+                    ))}
+                </div>
             </div>
-
         </div>
     );
 };

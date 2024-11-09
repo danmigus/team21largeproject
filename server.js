@@ -184,7 +184,7 @@ app.post('/api/addtoroster', async (req, res, next) =>
   
 });
 
-app.get('/api/getrosters', async (req, res, next) => {
+app.post('/api/getrosters', async (req, res, next) => {
 
   // Incoming: userId
   // Outgoing: list of rosters with player data or error
