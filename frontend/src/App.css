@@ -76,15 +76,17 @@ ul {
   border-image: url("../src/assets/purple-fire.gif") 55;
 }
 
-.playerImage {
+.playerImg {
   width: 10%;
   border: 0.5px white solid;
+  border-radius: 50px;
 }
 
-.selectDiv {
+.searchDiv, .userRosters {
   border: solid 1px;
   padding: 20px;
   float: left;
+  width: 450px;
 }
 
 .selectPosition {
@@ -93,19 +95,35 @@ ul {
 
 .searchTeam {
   float: left;
-  height: 10px;
+  height: 20px;
   width: 100px;
+}
+
+#searchButton {
+  cursor: pointer;
+  border-radius: 10px;
+  width: 100px;
+}
+
+#searchButton:hover {
+  background-color: rgb(167, 163, 160);
 }
 
 .dragHereDiv {
   float: left;
+  margin: 4px;
+  text-align: center;
 }
 
 .dragHereBox {
-  border: dotted 5px;
-  width: 500px ;
+  border: dotted 4px;
+  width: 400px ;
   height: 500px;
   float: left;
+  text-align: center;
+}
+
+.userRosters {
   text-align: center;
 }
 

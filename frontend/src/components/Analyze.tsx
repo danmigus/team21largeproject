@@ -5,13 +5,14 @@ function Analyze()
 {
     const { firstName: userFirstName, lastName: userLastName, logoutUser: doLogout } = useUserInfo()
 
-    // Usestate stuff.
     const [message,setMessage] = useState('');
     const [playerName, setSearchText] = useState('');
     const [position, setSearchPosition] = useState('');
     const [team, setSearchTeam] = useState('');
-    const [playerCard, setPlayerCards] = useState<string[]>([]);
-    const [ecr, setEcr] = useState('');
+    const [searchPlayersArray, setSearchPlayers] = useState<string[]>([]);
+    const [rosterPlayersArray, setRosterPlayers] = useState<string[]>([]);
+    const [searchEcr, setSearchEcr] = useState('');
+    const [rosterEcr, setRosterEcr] = useState('');
     const [searchResults,setResults] = useState([
         {
             _id: "",
@@ -41,9 +42,14 @@ function Analyze()
         setSearchText( e.target.value );
     }
 
-    function handleEcr( ecr:string ) : void
+    function handleSearchEcr( ecr:string ) : void
     {
-        setEcr(ecr);
+        setSearchEcr(ecr);
+    }
+
+    function handleRosterEcr ( ecr:string ) : void
+    {
+        setRosterEcr(ecr);
     }
 
     function handleSearchPosition ( e: any ) : void
@@ -68,15 +74,26 @@ function Analyze()
         console.log(card);
     }
 
-    function handleDrop (e: React.DragEvent)
+    function handleFromSearchDrop (e: React.DragEvent)
     {
         const card = e.dataTransfer.getData("card") as string;
         console.log(card);
-        setPlayerCards([...playerCard, card]);
+        setSearchPlayers([...searchPlayersArray, card]);
 
         console.log("Adding: " + (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)).toFixed(2));
-        let newEcr:Number = (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)) + Number(ecr);
-        handleEcr(newEcr.toFixed(2));
+        let newEcr:Number = (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)) + Number(searchEcr);
+        handleSearchEcr(newEcr.toFixed(2));
+    }
+
+    function handleFromRosterDrop (e: React.DragEvent)
+    {
+        const card = e.dataTransfer.getData("card") as string;
+        console.log(card);
+        setRosterPlayers([...rosterPlayersArray, card]);
+
+        console.log("Adding: " + (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)).toFixed(2));
+        let newEcr:Number = (15 - ((JSON.parse(card).rank_ecr - 1) * 0.05)) + Number(rosterEcr);
+        handleRosterEcr(newEcr.toFixed(2));
     }
 
     async function searchPlayers(event:any) : Promise<void>
@@ -113,28 +130,27 @@ function Analyze()
 
     return(
         <div>
-            <div id="result">{message}</div>
+            <div id="result">Status: {message}</div>
             <br></br>
-
-            <div className="selectDiv">
-                <div>Search: </div>
+            
+            <div className="searchDiv">
+                <div><h2> 🔍 Search </h2></div>
                 <div><input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} /></div>
                 <select className="selectPosition" onChange={handleSearchPosition}>
-                    <option value=""> Position </option>
+                    <option value="">--Position--</option>
                     <option>QB</option>
                     <option>WR</option>
                     <option>RB</option>
                     <option>TE</option>
                 </select>
                 <input type="text" className="searchTeam" placeholder="Team" onChange={handleSearchTeam} />
-
                 <div><input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/></div>
 
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
                     {searchResults.map((info) => (
                         <li className="card" draggable onDragStart= {(e) => handleDrag(e, info)}>
-                            [{info.player_position_id}, {info.player_team_id}] <img className="playerImage" alt="[player img]" draggable="false" src={info.player_image_url}></img> {info.player_name}
+                            <img className="playerImg" alt="[player img]" draggable="false" src={info.player_image_url}></img> [{info.player_position_id}, {info.player_team_id}]  {info.player_name}
                         </li>
                     ))}
                 </ul>
@@ -143,15 +159,32 @@ function Analyze()
 
 
             <div className="dragHereDiv">
-                <h2> Total ECR: {ecr} </h2>
+                <h2> Search Value: {searchEcr} </h2>
 
-                <div className="dragHereBox" onDrop={handleDrop} onDragOver={handleDragHere}>
-                    {playerCard.map((card) => (
+                <div className="dragHereBox" onDrop={handleFromSearchDrop} onDragOver={handleDragHere}>
+                    {searchPlayersArray.map((card) => (
                         <div className="card" style={{cursor: "pointer"}}>
-                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}] <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img> {JSON.parse(card).player_name}
+                            <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img> [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
                         </div>
                     ))}
                 </div>
+            </div>
+
+            <div className="dragHereDiv">
+                <h2> Your Value: {rosterEcr} </h2>
+
+                <div className="dragHereBox" onDrop={handleFromRosterDrop} onDragOver={handleDragHere}>
+                    {rosterPlayersArray.map((card) => (
+                        <div className="card" style={{cursor: "pointer"}}>
+                            <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img> [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="userRosters">
+                <h2>Your Rosters 🏈</h2>
+
             </div>
 
         </div>
