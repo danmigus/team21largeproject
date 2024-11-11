@@ -55,7 +55,7 @@ async function sendEmail (req, res, next) {
   sgMail
     .send(msg)
     .then(() => {
-      console.log('Email sent')
+      console.log(`Email sent to ${email}`);
     })
     .catch((error) => {
       console.error(error)
@@ -363,7 +363,7 @@ app.get('/api/verify', async (req, res, next) =>
       }
       else
       {
-        const changeFlag = await db.collection('Users').updateOne({Email: decodedToken.email}, {$set: {VerificationFlag: true}})
+        const changeFlag = await db.collection('Users').updateOne({Email: decodedToken.em}, {$set: {VerificationFlag: true}})
         console.log("Redirecting user to login...");
         res.redirect('https://galaxycollapse.com');
       }
@@ -391,6 +391,8 @@ app.post('/api/resetpassword', async (req, res, next) =>
     const token = jwt.sign({ email }, `${secretKey}`, { expiresIn: '15m'});
     console.log("Encoded token:" + token);
     const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}&passwordReset=yes`;
+
+    req.body = { email: email, tokenUrl: tokenUrl };
     await sendEmail(req, res);
     const updatePasswordToken = await db.collection('Users').updateOne({Email: email}, {$set: {PasswordReset: false}})
   }
