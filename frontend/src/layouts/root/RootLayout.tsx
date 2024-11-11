@@ -18,7 +18,6 @@ export default function RootLayout() {
             <div className={styles.leftSide}>
               <h1>TRADE WIZARD</h1>
               <NavButton label="ANALYZE" destination="/analyze" selected={pathname === '/analyze'} />
-              <NavButton label="CARDS" destination="/cards" selected={pathname === '/cards'} />
               <NavButton label="ROSTER BUILDER" destination="/roster-builder" selected={pathname === '/roster-builder'} />
             </div>
 
