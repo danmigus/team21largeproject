@@ -365,9 +365,9 @@ app.get('/api/verify', async (req, res, next) =>
     }
   
     //var ret = { error:error};
-    res.status(200).send(error);  
-  
+    res.redirect('https://galaxycollapse.com');
   });
+  
   
 
 app.post('/api/login', async (req, res, next) => 

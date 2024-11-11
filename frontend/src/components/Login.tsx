@@ -75,7 +75,10 @@ function Login()
         <br></br> <br></br>
         <Link to="/register" className="registerLink">Register Now</Link>
         <br></br>
+        <Link to="/resetpassword" className="resetPasswordPage">Reset Password</Link>
+        <br></br>
         <Link to="/resend" className="resendPage">Resend Email Verification</Link>
+        <br></br>
         <div id="loginResult">{message}</div>
      </div>
     );
