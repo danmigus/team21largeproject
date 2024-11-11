@@ -1,15 +1,21 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function ResetPassword()
+function SetPassword()
 {
     const [message,setMessage] = useState('');
     const [email,setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const app_name = 'galaxycollapse.com';
 
     function handleSetEmail (e:any) : void
     {
         setEmail(e.target.value);
+    }
+
+    function handleSetPassword (e:any) : void
+    {
+        setPassword(e.target.value);
     }
 
     function buildPath(route:string) : string
@@ -24,21 +30,22 @@ function ResetPassword()
         }
     }
 
-    async function resetPassword(event:any) : Promise<void>
+    
+    async function setNewPassword(event:any) : Promise<void>
     {
         event.preventDefault();
 
-        let obj = { email };
+        let obj = { email , newPassword: password};
         let js = JSON.stringify(obj);
 
         try
         {
-            const response = await fetch(buildPath("api/resetpassword"),
+            const response = await fetch(buildPath("api/setpassword"),
             {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             var res = JSON.parse(await response.text());
             console.log(res);
-            setMessage("Please check your email for a password reset link.");
+            setMessage("New password set");
             return;
         }
 
@@ -48,16 +55,18 @@ function ResetPassword()
             return;
         }
     }
-    
+
     return(
         <div id="passwordResetDiv">
             <div id="passwordResetForm">
-                <h1> Reset Password 🔑</h1>
+                <h1> Change Password🔑</h1>
                 <div id="result">{message}</div>
                 <br></br>
-                <input type="email" id="email" placeholder="Enter email here" onChange={handleSetEmail} />
+                <input type="email" id="email" placeholder="Re-enter email here" onChange={handleSetEmail} />
                 <br></br>
-                <input type="submit" id="resetPasswordButton" className="buttons" value = "Submit" onClick={resetPassword}/>
+                <input type="password" id="password" placeholder="Enter new password here" onChange={handleSetPassword} />
+                <br></br>
+                <input type="submit" id="resetPasswordButton" className="buttons" value = "Submit" onClick={setNewPassword}/>
                 <br></br>
             </div>
             <br></br>
@@ -66,4 +75,4 @@ function ResetPassword()
     );
 }
 
-export default ResetPassword;
+export default SetPassword;

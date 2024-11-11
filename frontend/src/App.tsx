@@ -7,6 +7,7 @@ import CardPage from './pages/CardPage';
 import RegisterPage from './pages/RegisterPage';
 import ResendPage from './pages/ResendPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import SetPasswordPage from './pages/SetPasswordPage';
 import AnalyzePage from './pages/AnalyzePage';
 import RootLayout from "./layouts/root/RootLayout.tsx";
 import RosterBuilder from "./pages/RosterBuilder/RosterBuilder.tsx";
@@ -21,6 +22,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/resend" element={<ResendPage />} />
         <Route path="/resetpassword" element={<ResetPasswordPage />} />
+        <Route path="/setpassword" element={<SetPasswordPage />} />
 
         {/* Authenticated/user routes */}
         <Route path="/" element={<RootLayout />}>

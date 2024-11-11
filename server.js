@@ -354,8 +354,20 @@ app.get('/api/verify', async (req, res, next) =>
 
       const decodedToken = jwt.verify(req.query.token, secretKey);
       
-      const changeFlag = await db.collection('Users').updateOne({Email: decodedToken.em}, {$set: {VerificationFlag: true}})
-      error = 'Successfully verified email';
+      if (req.query.passwordReset ===  "yes")
+      {
+        // resetPasswordSuccess is the page where user sets new pass.
+        const updatePasswordToken = await db.collection('Users').updateOne({Email: decodedToken.email}, {$set: {PasswordReset: true}})
+        console.log("Redirecting user to set password...");
+        res.redirect('https://galaxycollapse.com/setpassword');
+      }
+      else
+      {
+        const changeFlag = await db.collection('Users').updateOne({Email: decodedToken.email}, {$set: {VerificationFlag: true}})
+        console.log("Redirecting user to login...");
+        res.redirect('https://galaxycollapse.com');
+      }
+      error = 'Successfully verified';
     }
 
     catch(e)
@@ -365,10 +377,63 @@ app.get('/api/verify', async (req, res, next) =>
     }
   
     //var ret = { error:error};
-    res.redirect('https://galaxycollapse.com');
   });
   
+app.post('/api/resetpassword', async (req, res, next) =>
+{
+  var error = '';
+  const { email } = req.body;
+  const jwt = require('jsonwebtoken');
+  try
+  {
+    const db = client.db();
+
+    const token = jwt.sign({ email }, `${secretKey}`, { expiresIn: '15m'});
+    console.log("Encoded token:" + token);
+    const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}&passwordReset=yes`;
+    await sendEmail(req, res);
+    const updatePasswordToken = await db.collection('Users').updateOne({Email: email}, {$set: {PasswordReset: false}})
+  }
+
+  catch(e)
+  {
+     error = e.toString();
+     console.error(error);
+  }
+
+  var ret = { error : error };
+  res.status(200).json(ret);  
+});
+
+app.post('/api/setpassword', async (req, res, next) =>
+  {
+    var error = '';
+    const { email, newPassword } = req.body;
+    const jwt = require('jsonwebtoken');
+    try
+    {
+      const db = client.db(); 
+      
+      const results = await db.collection('Users').find({Email: email}).toArray();
+
+      if (results[0].PasswordReset === true )
+      {
+        const updatePassword = await db.collection('Users').updateOne({Email: email}, {$set: {Password: newPassword, PasswordReset: false}})
+        e = 'Password reset complete';
+      }
+      else
+        e = 'Password reset flag is not set';
+    }
+
+    catch(e)
+    {
+       error = e.toString();
+       console.error(error);
+    }
   
+    var ret = { error : error };
+    res.status(200).json(ret);  
+  });
 
 app.post('/api/login', async (req, res, next) => 
 {
