@@ -1,0 +1,14 @@
+.card {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  background-color: #1a1a1a;
+  border: solid 0.25rem #363636;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+
+  & img {
+    height: 1.5rem;
+  }
+}

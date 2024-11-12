@@ -68,3 +68,15 @@
     cursor: pointer;
   }
 }
+
+.snackbar {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1a1a1a;
+  border: solid 0.25rem #363636;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+}

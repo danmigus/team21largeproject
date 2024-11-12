@@ -1,9 +1,13 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useContext} from 'react';
 import {useUserInfo} from "../util/userUtil.ts";
+import PageHeader from "./PageHeader/PageHeader.tsx";
+import {SnackbarContext} from "../util/snackbar.ts";
+import {buildUrl} from "../util/api.ts";
 
 function Analyze()
 {
     const { firstName: userFirstName, lastName: userLastName, logoutUser: doLogout } = useUserInfo()
+    const snackbarController = useContext(SnackbarContext)
 
     const userData:any = localStorage.getItem("user_data")
     const userId:string = JSON.parse(userData).id;
@@ -22,14 +26,13 @@ function Analyze()
                 setRosters(loadedRosters);
             }
             catch(error:any )
-            {   
+            {
                 console.log(error);
             }
         }
         mount();
     },[]);
 
-    const [message,setMessage] = useState('');
     const [playerName, setSearchText] = useState('');
     const [position, setSearchPosition] = useState('');
     const [team, setSearchTeam] = useState('');
@@ -47,19 +50,6 @@ function Analyze()
             player_position_id: ""
         }
     ]);
-    const app_name = 'galaxycollapse.com';
-
-    function buildPath(route:string) : string
-    {
-        if (process.env.NODE_ENV != 'development')
-        {
-            return 'https://' + app_name + '/' + route;
-        }
-        else
-        {
-            return 'http://localhost:5000/' + route;
-        }
-    }
 
     function handleSearchText( e: any ) : void
     {
@@ -136,22 +126,19 @@ function Analyze()
 
         try
         {
-            setMessage("Searching... 🤔")
-            const response = await fetch(buildPath("api/searchplayer"),
+            snackbarController.set({ label: "Searching... 🤔" })
+            const response = await fetch(buildUrl("api/searchplayer"),
                 {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             var res = JSON.parse(await response.text());
 
-            setMessage("Search completed 🤓");
-            setTimeout(() => {
-                setMessage("");
-            }, 2000);
+            snackbarController.set({ label: "Search completed 🤓" });
             setResults(res.players);
         }
 
         catch(error:any)
         {
-            setMessage('❌ Search went wrong...');
+            snackbarController.set({ label: '❌ Search went wrong...' });
             alert(error.toString());
             return;
         }
@@ -185,10 +172,16 @@ function Analyze()
 
     return(
         <div>
-            <div id="result">Status: {message}</div>
+
+            {/* Header */}
+            <PageHeader
+              label="ANALYZE"
+              description="Replace this text with a short description"
+            />
+
             <div style={{textAlign:"center"}}className="rainbow-text">You gain: {(Number(rosterEcr)-Number(searchEcr)).toFixed(2)} </div>
             <br></br>
-            
+
             <div className="searchDiv">
                 <div><h2> 🔍 Search </h2></div>
                 <div><input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} /></div>
