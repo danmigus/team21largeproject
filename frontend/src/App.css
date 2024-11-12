@@ -74,6 +74,7 @@ ul {
   margin: 2px;
   border: 3px solid;
   border-image: url("../src/assets/purple-fire.gif") 55;
+  width: 350px;
 }
 
 .playerImg {
@@ -109,7 +110,7 @@ ul {
   background-color: rgb(167, 163, 160);
 }
 
-.dragHereDiv {
+.dragHereDiv , .userRosters{
   float: left;
   margin: 4px;
   text-align: center;
