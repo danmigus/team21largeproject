@@ -110,9 +110,43 @@ function Analyze()
         handleRosterEcr(newEcr.toFixed(2));
     }
 
-    function hideRosterList ()
+    function openRosterPlayersUL (event:any) : void
     {
-        document.getElementById("rosterList")!.style.display = "none";
+        event.preventDefault();
+        const list = event.currentTarget.lastChild;
+        let rosterTitle = event.currentTarget.firstChild.innerText;
+        rosterTitle = rosterTitle.slice(0, rosterTitle.length - 1);
+
+        console.log(rosterTitle);
+        if (list.style.display === "block")
+        {
+            rosterTitle = rosterTitle + '➤';
+            list.style.display = "none";
+        }
+        else
+        {
+            rosterTitle = rosterTitle + '⮟';
+            list.style.display = "block";
+        }
+        event.currentTarget.firstChild.innerText = rosterTitle;
+    }
+
+    function deletePlayer (e: any, rank_ecr: number, from: string) : void
+    {
+        e.preventDefault();
+        console.log(typeof(rank_ecr));
+        e.currentTarget.parentElement.remove();
+
+        if (from === "fromSearch")
+        {
+            let newEcr:Number = Number(searchEcr) - (15 - (rank_ecr - 1) * 0.05);
+            handleSearchEcr(newEcr.toFixed(2));
+        }
+        else if (from === "fromRoster")
+        {
+            let newEcr:Number = Number(rosterEcr) - (15 - (rank_ecr - 1) * 0.05);
+            handleRosterEcr(newEcr.toFixed(2));
+        }
     }
 
     async function searchPlayers(event:any) : Promise<void>
@@ -179,12 +213,16 @@ function Analyze()
               description="Replace this text with a short description"
             />
 
-            <div style={{textAlign:"center"}}className="rainbow-text">You gain: {(Number(rosterEcr)-Number(searchEcr)).toFixed(2)} </div>
+            <div style={{textAlign:"center"}}className="rainbow-text">
+                Net Value: {(Number(searchEcr)-Number(rosterEcr)).toFixed(2)}
+            </div>
             <br></br>
 
             <div className="searchDiv">
                 <div><h2> 🔍 Search </h2></div>
-                <div><input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} /></div>
+                <div>
+                    <input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} />
+                </div>
                 <select className="selectPosition" onChange={handleSearchPosition}>
                     <option value="">--Position--</option>
                     <option>QB</option>
@@ -193,13 +231,16 @@ function Analyze()
                     <option>TE</option>
                 </select>
                 <input type="text" className="searchTeam" placeholder="Team" onChange={handleSearchTeam} />
-                <div><input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/></div>
+                <div>
+                    <input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/>
+                </div>
 
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
                     {searchResults.map((info) => (
                         <li className="card" draggable onDragStart= {(e) => handleDrag(e, info)}>
-                            <img className="playerImg" alt="[player img]" draggable="false" src={info.player_image_url}></img> [{info.player_position_id}, {info.player_team_id}]  {info.player_name}
+                            <img className="playerImg" alt="[player img]" draggable="false" src={info.player_image_url}></img>
+                            [{info.player_position_id}, {info.player_team_id}]  {info.player_name}
                         </li>
                     ))}
                 </ul>
@@ -211,7 +252,9 @@ function Analyze()
                 <div className="dragHereBox" onDrop={handleFromSearchDrop} onDragOver={handleDragHere}>
                     {searchPlayersArray.map((card) => (
                         <div className="card" style={{cursor: "pointer"}}>
-                            <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img> [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                            <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img>
+                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                            <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromSearch")}>🗑️</button>
                         </div>
                     ))}
                 </div>
@@ -222,7 +265,9 @@ function Analyze()
                 <div className="dragHereBox" onDrop={handleFromRosterDrop} onDragOver={handleDragHere}>
                     {rosterPlayersArray.map((card) => (
                         <div className="card" style={{cursor: "pointer"}}>
-                            <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img> [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                            <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img>
+                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                            <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromRoster")}>🗑️</button>
                         </div>
                     ))}
                 </div>
@@ -235,8 +280,17 @@ function Analyze()
                 <br></br>
                 <div id="rosterList">
                     {rosters.map((roster) => (
-                        <div className="roster" onClick={hideRosterList}>
+                        <div className="roster" onClick={openRosterPlayersUL}>
                             <h3>{roster.RosterName} ➤ </h3>
+
+                            <ul id="rosterPlayers" style={{padding: "1px", display: "none"}}>
+                            {roster.players.map((player) => (
+                                <div className="card" draggable onDragStart= {(e) => handleDrag(e, player)}>
+                                    <img className="playerImg" alt="[player img]" draggable="false" src={player.player_image_url}></img>
+                                    [{player.player_position_id}, {player.player_team_id}]  {player.player_name}
+                                </div>
+                            ))}
+                            </ul>
                         </div>
                     ))}
                 </div>
