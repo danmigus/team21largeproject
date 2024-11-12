@@ -128,6 +128,12 @@ ul {
   text-align: center;
 }
 
+.deletePlayerButton {
+  float: right;
+  border: dotted orange 1px;
+  padding: 5px;
+}
+
 .playerImage {
   width: 10%;
   border:0.5px white solid;

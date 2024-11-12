@@ -141,6 +141,24 @@ function Analyze()
         event.currentTarget.firstChild.innerText = rosterTitle;
     }
 
+    function deletePlayer (e: any, rank_ecr: number, from: string) : void
+    {
+        e.preventDefault();
+        console.log(typeof(rank_ecr));
+        e.currentTarget.parentElement.remove();
+
+        if (from === "fromSearch")
+        {
+            let newEcr:Number = Number(searchEcr) - (15 - (rank_ecr - 1) * 0.05);
+            handleSearchEcr(newEcr.toFixed(2));
+        }
+        else if (from === "fromRoster")
+        {
+            let newEcr:Number = Number(rosterEcr) - (15 - (rank_ecr - 1) * 0.05);
+            handleRosterEcr(newEcr.toFixed(2));
+        }
+    }
+
     async function searchPlayers(event:any) : Promise<void>
     {
         event.preventDefault();
@@ -243,6 +261,7 @@ function Analyze()
                         <div className="card" style={{cursor: "pointer"}}>
                             <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img> 
                             [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                            <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromSearch")}>🗑️</button>
                         </div>
                     ))}
                 </div>
@@ -255,6 +274,7 @@ function Analyze()
                         <div className="card" style={{cursor: "pointer"}}>
                             <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img> 
                             [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                            <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromRoster")}>🗑️</button>
                         </div>
                     ))}
                 </div>
