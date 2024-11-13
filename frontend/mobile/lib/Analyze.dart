@@ -5,6 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AnalyzePage extends HookWidget {
+  const AnalyzePage({super.key});
+
   // Declare the function before useEffect
   Future<void> fetchUserData(ValueNotifier<Map<String, dynamic>> userData) async {
     final prefs = await SharedPreferences.getInstance();
@@ -34,10 +36,10 @@ class AnalyzePage extends HookWidget {
     final ecr = useState('');
     final searchResults = useState<List<Map<String, dynamic>>>([]);
 
-    final appName = 'galaxycollapse.com';
+    const appName = 'galaxycollapse.com';
 
     String buildPath(String route) {
-      if (bool.fromEnvironment('dart.vm.product')) {
+      if (const bool.fromEnvironment('dart.vm.product')) {
         return 'https://$appName/$route';
       } else {
         return 'http://localhost:5000/$route';
@@ -85,7 +87,7 @@ class AnalyzePage extends HookWidget {
 
         final res = jsonDecode(response.body);
         message.value = "Search completed 🤓";
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2));
         message.value = '';
         searchResults.value = List<Map<String, dynamic>>.from(res['players']);
       } catch (error) {
@@ -93,12 +95,12 @@ class AnalyzePage extends HookWidget {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: Text("Error"),
+            title: const Text("Error"),
             content: Text(error.toString()),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text("OK"),
+                child: const Text("OK"),
               ),
             ],
           ),
@@ -116,21 +118,21 @@ class AnalyzePage extends HookWidget {
           children: [
             ElevatedButton(
               onPressed: doLogout,
-              child: Text("Logout"),
+              child: const Text("Logout"),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(message.value),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Column(
               children: [
-                Text("Search: "),
+                const Text("Search: "),
                 TextField(
                   onChanged: handleSearchText,
-                  decoration: InputDecoration(hintText: 'Enter player name'),
+                  decoration: const InputDecoration(hintText: 'Enter player name'),
                 ),
                 DropdownButton<String>(
                   value: position.value.isNotEmpty ? position.value : null,
-                  hint: Text('Position'),
+                  hint: const Text('Position'),
                   items: ['QB', 'WR', 'RB', 'TE']
                       .map((String value) => DropdownMenuItem<String>(
                             value: value,
@@ -143,11 +145,11 @@ class AnalyzePage extends HookWidget {
                 ),
                 TextField(
                   onChanged: handleSearchTeam,
-                  decoration: InputDecoration(hintText: 'Team'),
+                  decoration: const InputDecoration(hintText: 'Team'),
                 ),
                 ElevatedButton(
                   onPressed: searchPlayers,
-                  child: Text("Submit"),
+                  child: const Text("Submit"),
                 ),
                 if (searchResults.value.isNotEmpty)
                   Expanded(
@@ -170,11 +172,11 @@ class AnalyzePage extends HookWidget {
                   ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text("Total ECR: ${ecr.value}"),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             DragTarget<String>(
-              onAccept: (card) {
+              onAcceptWithDetails: (card) {
                 final newEcr = (15 - ((jsonDecode(card)['rank_ecr'] - 1) * 0.05)) +
                     double.parse(ecr.value);
                 handleEcr(newEcr.toStringAsFixed(2));
