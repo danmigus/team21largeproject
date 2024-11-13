@@ -4,16 +4,15 @@ class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
 
   @override
-  _LoginFormState createState() => _LoginFormState();
+  LoginFormState createState() => LoginFormState();  // Removed underscore
 }
 
-class _LoginFormState extends State<LoginForm> {
+class LoginFormState extends State<LoginForm> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   String message = '';
 
   void doLogin() {
-    // Example logic to simulate login
     if (_usernameController.text == 'user' && _passwordController.text == 'password') {
       Navigator.pushNamed(context, '/analyze');
     } else {
@@ -96,3 +95,4 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 }
+

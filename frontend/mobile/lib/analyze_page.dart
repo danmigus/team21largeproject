@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AnalyzePage extends HookWidget {
   const AnalyzePage({super.key});
 
-  // Declare the function before useEffect
   Future<void> fetchUserData(ValueNotifier<Map<String, dynamic>> userData) async {
     final prefs = await SharedPreferences.getInstance();
     String? storedData = prefs.getString('user_data');
@@ -18,16 +17,12 @@ class AnalyzePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Fetch user data from shared_preferences
     final userData = useState<Map<String, dynamic>>({});
-
-    // Run the function to fetch the user data on widget build
     useEffect(() {
-      fetchUserData(userData); // Correctly call the function now
+      fetchUserData(userData);
       return null;
-    }, []); // Only run once when the widget is created
+    }, []);
 
-    // State variables (equivalent to useState in React)
     final message = useState('');
     final playerName = useState('');
     final position = useState('');
@@ -65,8 +60,11 @@ class AnalyzePage extends HookWidget {
     Future<void> doLogout() async {
       message.value = "Logging out...";
       final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();  // Clears all saved preferences
-      Navigator.pushReplacementNamed(context, '/');
+      await prefs.clear();
+
+      if (context.mounted) {  // Check if widget is still mounted
+        Navigator.pushReplacementNamed(context, '/');
+      }
     }
 
     Future<void> searchPlayers() async {
@@ -92,19 +90,22 @@ class AnalyzePage extends HookWidget {
         searchResults.value = List<Map<String, dynamic>>.from(res['players']);
       } catch (error) {
         message.value = '❌ Search went wrong...';
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text("Error"),
-            content: Text(error.toString()),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
-            ],
-          ),
-        );
+
+        if (context.mounted) {  // Check if widget is still mounted
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text("Error"),
+              content: Text(error.toString()),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                ),
+              ],
+            ),
+          );
+        }
       }
     }
 
@@ -176,7 +177,8 @@ class AnalyzePage extends HookWidget {
             Text("Total ECR: ${ecr.value}"),
             const SizedBox(height: 16),
             DragTarget<String>(
-              onAcceptWithDetails: (card) {
+              onAcceptWithDetails: (details) {  // Correctly extract data from DragTargetDetails<String>
+                final card = details.data;
                 final newEcr = (15 - ((jsonDecode(card)['rank_ecr'] - 1) * 0.05)) +
                     double.parse(ecr.value);
                 handleEcr(newEcr.toStringAsFixed(2));
@@ -209,3 +211,4 @@ class AnalyzePage extends HookWidget {
     );
   }
 }
+
