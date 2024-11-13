@@ -63,18 +63,22 @@ ul {
 }
 
 .card {
-  background-image: url();
-  background-size: 15%;
+  font-weight: bold;
+  background-size: 100px !important;
+  background-position: bottom !important;
   background-repeat: no-repeat;
-  background-position: left;
-  -webkit-text-stroke: 0.5px #eeeeee;
+  color: rgb(255, 242, 237);
+  text-shadow: 0 0 11px rgb(15, 20, 24), 0 0 3px rgb(15, 21, 26), 0 0 3px rgb(15, 21, 26);
   backdrop-filter: blur(10px);
   cursor: grab;
   padding: 3px;
   margin: 2px;
-  border: 3px solid;
-  border-image: url("../src/assets/purple-fire.gif") 55;
-  width: 350px;
+  border: 3px solid rgba(34, 2, 30, 0.747);
+  /* border-image: url("../src/assets/fire.gif"); */
+  width: 100px;
+  height: 150px;
+  float: left;
+  text-align: center;
 }
 
 .playerImg {
@@ -87,7 +91,7 @@ ul {
   border: solid 1px;
   padding: 20px;
   float: left;
-  width: 450px;
+  width: 500px;
 }
 
 .selectPosition {
@@ -118,8 +122,8 @@ ul {
 
 .dragHereBox {
   border: dotted 4px;
-  width: 400px ;
-  height: 500px;
+  width: 350px ;
+  height: 650px;
   float: left;
   text-align: center;
 }
@@ -149,6 +153,8 @@ ul {
   cursor: pointer;
   padding: 5px;
   margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 @keyframes rainbow {

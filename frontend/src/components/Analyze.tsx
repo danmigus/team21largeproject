@@ -81,9 +81,50 @@ function Analyze()
         e.preventDefault();
     }
 
-    function handleDrag (e: React.DragEvent, card:any)
+    function addToSearchEcr(card: any): void
     {
+        console.log(card.rank_ecr);
+        console.log("Adding: " + (15 - ((card).rank_ecr - 1) * 0.05));
+        let newEcr:Number = (15 - (((card).rank_ecr - 1) * 0.05)) + Number(searchEcr);
+        handleSearchEcr(newEcr.toFixed(2));
+    }
+
+    function handleFromSearch (e: any, card:any)
+    {
+        // onClick event
+        if (e.dataTransfer === undefined)
+        {
+            setSearchPlayers([...searchPlayersArray, JSON.stringify(card)]);
+            addToSearchEcr(card);
+            return;
+        }
+
         e.dataTransfer.setData("card", JSON.stringify(card));
+
+        console.log("Starting drag");
+        console.log(card);
+    }
+
+    function addToRosterEcr(card: any): void
+    {
+        console.log(card.rank_ecr);
+        console.log("Adding: " + (15 - ((card).rank_ecr - 1) * 0.05));
+        let newEcr:Number = (15 - (((card).rank_ecr - 1) * 0.05)) + Number(rosterEcr);
+        handleRosterEcr(newEcr.toFixed(2));
+    }
+
+    function handleFromRoster (e: any, card:any)
+    {
+        // onClick event
+        if (e.dataTransfer === undefined)
+        {
+            setRosterPlayers([...rosterPlayersArray, JSON.stringify(card)]);
+            addToRosterEcr(card);
+            return;
+        }
+
+        e.dataTransfer.setData("card", JSON.stringify(card));
+
         console.log("Starting drag");
         console.log(card);
     }
@@ -185,7 +226,7 @@ function Analyze()
 
         try
         {
-            const response = await fetch(buildPath("api/getrosters"),
+            const response = await fetch(buildUrl("api/getrosters"),
             {method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
 
             var res = JSON.parse(await response.text());
@@ -238,8 +279,7 @@ function Analyze()
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
                     {searchResults.map((info) => (
-                        <li className="card" draggable onDragStart= {(e) => handleDrag(e, info)}>
-                            <img className="playerImg" alt="[player img]" draggable="false" src={info.player_image_url}></img>
+                        <li className="card" draggable onDragStart= {(e) => handleFromSearch(e, info)} onClick={(e)=> {handleFromSearch(e, info)}} style={{background: `no-repeat 5% url(${info.player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px"}}>
                             [{info.player_position_id}, {info.player_team_id}]  {info.player_name}
                         </li>
                     ))}
@@ -251,10 +291,9 @@ function Analyze()
                 <h2> Search Value: {searchEcr} </h2>
                 <div className="dragHereBox" onDrop={handleFromSearchDrop} onDragOver={handleDragHere}>
                     {searchPlayersArray.map((card) => (
-                        <div className="card" style={{cursor: "pointer"}}>
-                            <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img>
-                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                        <div className="card" style={{background: `no-repeat 5% url(${JSON.parse(card).player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px", cursor: "pointer"}}>
                             <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromSearch")}>🗑️</button>
+                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
                         </div>
                     ))}
                 </div>
@@ -264,10 +303,9 @@ function Analyze()
                 <h2> Your Value: {rosterEcr} </h2>
                 <div className="dragHereBox" onDrop={handleFromRosterDrop} onDragOver={handleDragHere}>
                     {rosterPlayersArray.map((card) => (
-                        <div className="card" style={{cursor: "pointer"}}>
-                            <img className="playerImg" alt="[player img]" draggable="false" src={JSON.parse(card).player_image_url}></img>
-                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
+                        <div className="card" style={{background: `no-repeat 5% url(${JSON.parse(card).player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px", cursor: "pointer"}}>
                             <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromRoster")}>🗑️</button>
+                            [{JSON.parse(card).player_position_id}, {JSON.parse(card).player_team_id}]  {JSON.parse(card).player_name}
                         </div>
                     ))}
                 </div>
@@ -280,13 +318,13 @@ function Analyze()
                 <br></br>
                 <div id="rosterList">
                     {rosters.map((roster) => (
-                        <div className="roster" onClick={openRosterPlayersUL}>
-                            <h3>{roster.RosterName} ➤ </h3>
+                        <div className="roster">
+                            <h3 onClick={openRosterPlayersUL} >{roster.RosterName} ➤ </h3>
 
                             <ul id="rosterPlayers" style={{padding: "1px", display: "none"}}>
-                            {roster.players.map((player) => (
-                                <div className="card" draggable onDragStart= {(e) => handleDrag(e, player)}>
-                                    <img className="playerImg" alt="[player img]" draggable="false" src={player.player_image_url}></img>
+                            {roster.players.map((player:any) => (
+                                <div className="card" draggable onDragStart= {(e) => handleFromRoster(e, player)} onClick={(e)=> {handleFromRoster(e, player)}} style={{background: `no-repeat 5% url(${player.player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px"}}>
+
                                     [{player.player_position_id}, {player.player_team_id}]  {player.player_name}
                                 </div>
                             ))}
