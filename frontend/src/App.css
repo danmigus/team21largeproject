@@ -87,6 +87,10 @@ ul {
   border-radius: 50px;
 }
 
+.playerTitle {
+  display: flex;
+}
+
 .searchDiv, .userRosters {
   border: solid 1px;
   padding: 20px;
@@ -125,7 +129,31 @@ ul {
   width: 350px ;
   height: 650px;
   float: left;
-  text-align: center;
+}
+
+.playerName {
+  position: absolute;
+  top: 0%;
+  left: 0;
+  right: 0;
+  font-size: 15px;
+  z-index: 1;
+}
+
+.playerPosition {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 15px;
+  z-index: 1;
+}
+
+.playerTeam {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 15px;
+  z-index: 1;
 }
 
 .userRosters {
@@ -134,8 +162,13 @@ ul {
 
 .deletePlayerButton {
   float: right;
-  border: dotted orange 1px;
+  border: dotted rgb(250, 81, 29) 2px;
+  backdrop-filter: blur(10px);
   padding: 5px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
 }
 
 .playerImage {
