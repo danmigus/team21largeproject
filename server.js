@@ -55,37 +55,13 @@ async function sendEmail (req, res, next) {
   sgMail
     .send(msg)
     .then(() => {
-      console.log('Email sent')
+      console.log(`Email sent to ${email}`);
     })
     .catch((error) => {
       console.error(error)
     })
 }
 
-
-app.post('/api/addcard', async (req, res, next) =>
-{
-  // incoming: userId, color
-  // outgoing: error
-  
-  const { userId, card } = req.body;
-
-  const newCard = {Card:card,UserId:userId};
-  var error = '';
-
-  try
-  {
-    const db = client.db();
-    const result = db.collection('Cards').insertOne(newCard);
-  }
-  catch(e)
-  {
-    error = e.toString();
-  }
-
-  var ret = { error: error };
-  res.status(200).json(ret);
-});
 
 app.post('/api/newroster', async (req, res, next) =>{
 
@@ -184,7 +160,7 @@ app.post('/api/addtoroster', async (req, res, next) =>
   
 });
 
-app.get('/api/getrosters', async (req, res, next) => {
+app.post('/api/getrosters', async (req, res, next) => {
 
   // Incoming: userId
   // Outgoing: list of rosters with player data or error
@@ -378,8 +354,20 @@ app.get('/api/verify', async (req, res, next) =>
 
       const decodedToken = jwt.verify(req.query.token, secretKey);
       
-      const changeFlag = await db.collection('Users').updateOne({Email: decodedToken.em}, {$set: {VerificationFlag: true}})
-      error = 'Successfully verified email';
+      if (req.query.passwordReset ===  "yes")
+      {
+        // resetPasswordSuccess is the page where user sets new pass.
+        const updatePasswordToken = await db.collection('Users').updateOne({Email: decodedToken.email}, {$set: {PasswordReset: true}})
+        console.log("Redirecting user to set password...");
+        res.redirect('https://galaxycollapse.com/setpassword');
+      }
+      else
+      {
+        const changeFlag = await db.collection('Users').updateOne({Email: decodedToken.em}, {$set: {VerificationFlag: true}})
+        console.log("Redirecting user to login...");
+        res.redirect('https://galaxycollapse.com');
+      }
+      error = 'Successfully verified';
     }
 
     catch(e)
@@ -389,10 +377,65 @@ app.get('/api/verify', async (req, res, next) =>
     }
   
     //var ret = { error:error};
-    res.status(200).send(error);  
-  
   });
   
+app.post('/api/resetpassword', async (req, res, next) =>
+{
+  var error = '';
+  const { email } = req.body;
+  const jwt = require('jsonwebtoken');
+  try
+  {
+    const db = client.db();
+
+    const token = jwt.sign({ email }, `${secretKey}`, { expiresIn: '15m'});
+    console.log("Encoded token:" + token);
+    const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}&passwordReset=yes`;
+
+    req.body = { email: email, tokenUrl: tokenUrl };
+    await sendEmail(req, res);
+    const updatePasswordToken = await db.collection('Users').updateOne({Email: email}, {$set: {PasswordReset: false}})
+  }
+
+  catch(e)
+  {
+     error = e.toString();
+     console.error(error);
+  }
+
+  var ret = { error : error };
+  res.status(200).json(ret);  
+});
+
+app.post('/api/setpassword', async (req, res, next) =>
+  {
+    var error = '';
+    const { email, newPassword } = req.body;
+    const jwt = require('jsonwebtoken');
+    try
+    {
+      const db = client.db(); 
+      
+      const results = await db.collection('Users').find({Email: email}).toArray();
+
+      if (results[0].PasswordReset === true )
+      {
+        const updatePassword = await db.collection('Users').updateOne({Email: email}, {$set: {Password: newPassword, PasswordReset: false}})
+        e = 'Password reset complete';
+      }
+      else
+        e = 'Password reset flag is not set';
+    }
+
+    catch(e)
+    {
+       error = e.toString();
+       console.error(error);
+    }
+  
+    var ret = { error : error };
+    res.status(200).json(ret);  
+  });
 
 app.post('/api/login', async (req, res, next) => 
 {
@@ -571,31 +614,5 @@ app.post('/api/addplayers', async (req, res) =>
 
 });
 
-
-  
-app.post('/api/searchcards', async (req, res, next) => 
-  {
-    // incoming: userId, search
-    // outgoing: results[], error
-  
-    var error = '';
-  
-    const { userId, search } = req.body;
-  
-    var _search = search.trim();
-    
-    const db = client.db();
-    const results = await db.collection('Cards').find({Card:{$regex:_search+'.*', $options:'i'}, UserId:userId}).toArray();
-    
-    var _ret = [];
-    for( var i=0; i<results.length; i++ )
-    {
-      _ret.push( results[i].Card );
-    }
-    
-    var ret = {results:_ret, error:error};
-    res.status(200).json(ret);
-  });
-  
   
 
