@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'analyze_page.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -12,6 +11,7 @@ class _LoginFormState extends State<LoginForm> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String message = '';
+  bool _isPasswordVisible = false; // New variable to control password visibility
 
   String buildPath(String route) {
     return 'https://galaxycollapse.com/$route';
@@ -52,11 +52,10 @@ class _LoginFormState extends State<LoginForm> {
           message = '';
         });
 
-        // Navigate to '/analyze' route and pass user data as arguments
         Navigator.pushReplacementNamed(
           context,
           '/analyze',
-          arguments: user,  // Passing the user data here
+          arguments: user,
         );
       } else {
         setState(() {
@@ -87,16 +86,32 @@ class _LoginFormState extends State<LoginForm> {
             fillColor: Colors.white,
             border: OutlineInputBorder(),
           ),
+          style: const TextStyle(
+            color: Colors.black, 
+          ),
         ),
         const SizedBox(height: 10),
         TextField(
           controller: _passwordController,
-          obscureText: true,
-          decoration: const InputDecoration(
+          obscureText: !_isPasswordVisible, // Use _isPasswordVisible to toggle visibility
+          decoration: InputDecoration(
             labelText: 'Password',
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+            ),
+          ),
+          style: const TextStyle(
+            color: Colors.black,
           ),
         ),
         const SizedBox(height: 20),
@@ -143,3 +158,4 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 }
+

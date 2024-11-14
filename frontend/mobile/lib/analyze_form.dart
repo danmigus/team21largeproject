@@ -5,6 +5,8 @@ import 'dart:convert';
 class AnalyzeForm extends StatefulWidget {
   final Map<String, dynamic> user;
 
+  
+
   AnalyzeForm({required this.user});
 
   @override
@@ -23,6 +25,10 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
   List<String> searchPlayersArray = [];
   List<String> rosterPlayersArray = [];
 
+  String buildPath(String route) {
+    return 'https://galaxycollapse.com/$route';
+  }
+
   final List<String> nfcTeams = [
     'ARI', 'ATL', 'CAR', 'CHI', 'DAL', 'DET', 'GB', 'LAR', 'MIN', 'NO', 'NYG', 'PHI', 'SF', 'SEA', 'TB', 'WAS'
   ];
@@ -40,7 +46,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
   Future<void> loadRosters() async {
     try {
       final response = await http.post(
-        Uri.parse('https://yourapi.com/api/getrosters'),
+        Uri.parse(buildPath("api/getrosters")),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'userId': widget.user['id']}),
       );
@@ -57,7 +63,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
   Future<void> searchPlayers() async {
     try {
       final response = await http.post(
-        Uri.parse('https://yourapi.com/api/searchplayer'),
+        Uri.parse(buildPath("api/searchplayer")),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'playerName': playerName,
