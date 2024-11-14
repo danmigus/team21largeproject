@@ -80,14 +80,15 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 20),
         TextField(
           controller: _usernameController,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Username',
+            labelStyle: TextStyle(color: Colors.blue), // Change label color
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(),
           ),
           style: const TextStyle(
-            color: Colors.black, 
+            color: Colors.black,
           ),
         ),
         const SizedBox(height: 10),
@@ -96,6 +97,7 @@ class _LoginFormState extends State<LoginForm> {
           obscureText: !_isPasswordVisible, // Use _isPasswordVisible to toggle visibility
           decoration: InputDecoration(
             labelText: 'Password',
+            labelStyle: TextStyle(color: Colors.blue), // Change label color
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(),
@@ -158,4 +160,5 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 }
+
 
