@@ -237,6 +237,8 @@ function Analyze()
             alert(error.toString());
             return;
         }
+
+        setSearchTeam('');
     }
 
     async function loadRosters() : Promise<any[]>
