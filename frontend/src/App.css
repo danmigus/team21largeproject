@@ -98,8 +98,9 @@ ul {
   width: 500px;
 }
 
-.selectPosition {
+.selectPosition, .selectTeam {
   float: left;
+  padding: 8px;
 }
 
 .searchTeam {
