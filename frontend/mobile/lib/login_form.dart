@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'Analyze.dart';
+import 'analyze_page.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -34,17 +34,13 @@ class _LoginFormState extends State<LoginForm> {
       );
 
       final Map<String, dynamic> res = jsonDecode(response.body);
-      print("Parsed response data: $res"); // Print the parsed response as a map
-      // Check if `id` is -1, indicating failed login or unverified account
-      if (res['id'] == -1) 
-      {
+      print("Parsed response data: $res");
+
+      if (res['id'] == -1) {
         setState(() {
           message = 'Login failed: Incorrect credentials or account unverified';
         });
-      } 
-      else if (res['id'] != null && res['id'].toString().isNotEmpty) 
-      {
-        // Login is successful if `id` is not -1
+      } else if (res['id'] != null && res['id'].toString().isNotEmpty) {
         final user = {
           'firstName': res['firstName'],
           'lastName': res['lastName'],
@@ -56,29 +52,25 @@ class _LoginFormState extends State<LoginForm> {
           message = '';
         });
 
-        // Navigate to AnalyzePage and pass the user data
-        Navigator.pushReplacement(
+        // Navigate to '/analyze' route and pass user data as arguments
+        Navigator.pushReplacementNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) => AnalyzePage(user: user),
-          ),
+          '/analyze',
+          arguments: user,  // Passing the user data here
         );
-      }
-      else
-      {
+      } else {
         setState(() {
           message = 'Incorrect user credentials or verification needed';
         });
       }
-    } 
-    catch (error) {
+    } catch (error) {
       setState(() {
         message = 'An error occurred: ${error.toString()}';
       });
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -120,7 +112,7 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/register'); // Navigate to Register page
+            Navigator.pushNamed(context, '/register');
           },
           child: const Text(
             'Register Now',
@@ -130,7 +122,7 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/resetpassword'); // Navigate to Reset Password page
+            Navigator.pushNamed(context, '/resetpassword');
           },
           child: const Text(
             'Reset Password',
@@ -140,7 +132,7 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/resend'); // Navigate to Resend Email Verification page
+            Navigator.pushNamed(context, '/resend');
           },
           child: const Text(
             'Resend Email Verification',
