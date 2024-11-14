@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
-import 'analyze_page.dart';
-
+import 'register_page.dart';
+import 'reset_password_page.dart';
+import 'resend_verification_page.dart';
+import 'set_password_page.dart';
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Trade Wizard',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const LoginPage(),
+      theme: ThemeData.dark(),
+      initialRoute: '/', // Set the initial route
       routes: {
-        '/': (context) => const LoginPage(),  // Define root route
-        '/analyze': (context) => const AnalyzePage(),  // Define analyze route
+        '/': (context) => const LoginPage(),
+        '/register': (context) => RegisterPage(),
+        '/resetpassword': (context) => ResetPasswordPage(),
+        '/resend': (context) => ResendVerificationPage(),
+        '/setpassword': (context) => SetPasswordPage()
       },
     );
   }
 }
-
-
-
-

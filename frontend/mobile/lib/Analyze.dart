@@ -2,26 +2,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AnalyzePage extends HookWidget {
-  const AnalyzePage({super.key});
+  final Map<String, dynamic> user;
 
-  Future<void> fetchUserData(ValueNotifier<Map<String, dynamic>> userData) async {
-    final prefs = await SharedPreferences.getInstance();
-    String? storedData = prefs.getString('user_data');
-    if (storedData != null) {
-      userData.value = jsonDecode(storedData);
-    }
-  }
+  AnalyzePage({required this.user}); // Accept user data in constructor
 
   @override
   Widget build(BuildContext context) {
-    final userData = useState<Map<String, dynamic>>({});
-    useEffect(() {
-      fetchUserData(userData);
-      return null;
-    }, []);
+    // Initialize userData with the passed-in user data
+    final userData = useState<Map<String, dynamic>>(user);
 
     final message = useState('');
     final playerName = useState('');
@@ -31,10 +21,10 @@ class AnalyzePage extends HookWidget {
     final ecr = useState('');
     final searchResults = useState<List<Map<String, dynamic>>>([]);
 
-    const appName = 'galaxycollapse.com';
+    final appName = 'galaxycollapse.com';
 
     String buildPath(String route) {
-      if (const bool.fromEnvironment('dart.vm.product')) {
+      if (bool.fromEnvironment('dart.vm.product')) {
         return 'https://$appName/$route';
       } else {
         return 'http://localhost:5000/$route';
@@ -59,12 +49,7 @@ class AnalyzePage extends HookWidget {
 
     Future<void> doLogout() async {
       message.value = "Logging out...";
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
-
-      if (context.mounted) {  // Check if widget is still mounted
-        Navigator.pushReplacementNamed(context, '/');
-      }
+      Navigator.pushReplacementNamed(context, '/');
     }
 
     Future<void> searchPlayers() async {
@@ -85,27 +70,24 @@ class AnalyzePage extends HookWidget {
 
         final res = jsonDecode(response.body);
         message.value = "Search completed 🤓";
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(Duration(seconds: 2));
         message.value = '';
         searchResults.value = List<Map<String, dynamic>>.from(res['players']);
       } catch (error) {
         message.value = '❌ Search went wrong...';
-
-        if (context.mounted) {  // Check if widget is still mounted
-          showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: const Text("Error"),
-              content: Text(error.toString()),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("OK"),
-                ),
-              ],
-            ),
-          );
-        }
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("Error"),
+            content: Text(error.toString()),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        );
       }
     }
 
@@ -119,21 +101,21 @@ class AnalyzePage extends HookWidget {
           children: [
             ElevatedButton(
               onPressed: doLogout,
-              child: const Text("Logout"),
+              child: Text("Logout"),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text(message.value),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Column(
               children: [
-                const Text("Search: "),
+                Text("Search: "),
                 TextField(
                   onChanged: handleSearchText,
-                  decoration: const InputDecoration(hintText: 'Enter player name'),
+                  decoration: InputDecoration(hintText: 'Enter player name'),
                 ),
                 DropdownButton<String>(
                   value: position.value.isNotEmpty ? position.value : null,
-                  hint: const Text('Position'),
+                  hint: Text('Position'),
                   items: ['QB', 'WR', 'RB', 'TE']
                       .map((String value) => DropdownMenuItem<String>(
                             value: value,
@@ -146,11 +128,11 @@ class AnalyzePage extends HookWidget {
                 ),
                 TextField(
                   onChanged: handleSearchTeam,
-                  decoration: const InputDecoration(hintText: 'Team'),
+                  decoration: InputDecoration(hintText: 'Team'),
                 ),
                 ElevatedButton(
                   onPressed: searchPlayers,
-                  child: const Text("Submit"),
+                  child: Text("Submit"),
                 ),
                 if (searchResults.value.isNotEmpty)
                   Expanded(
@@ -173,12 +155,11 @@ class AnalyzePage extends HookWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             Text("Total ECR: ${ecr.value}"),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             DragTarget<String>(
-              onAcceptWithDetails: (details) {  // Correctly extract data from DragTargetDetails<String>
-                final card = details.data;
+              onAccept: (card) {
                 final newEcr = (15 - ((jsonDecode(card)['rank_ecr'] - 1) * 0.05)) +
                     double.parse(ecr.value);
                 handleEcr(newEcr.toStringAsFixed(2));
@@ -211,4 +192,3 @@ class AnalyzePage extends HookWidget {
     );
   }
 }
-

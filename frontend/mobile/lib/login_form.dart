@@ -1,28 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'Analyze.dart';
 
 class LoginForm extends StatefulWidget {
-  const LoginForm({super.key});
-
   @override
-  LoginFormState createState() => LoginFormState();  // Removed underscore
+  _LoginFormState createState() => _LoginFormState();
 }
 
-class LoginFormState extends State<LoginForm> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _LoginFormState extends State<LoginForm> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   String message = '';
 
-  void doLogin() {
-    if (_usernameController.text == 'user' && _passwordController.text == 'password') {
-      Navigator.pushNamed(context, '/analyze');
-    } else {
+  String buildPath(String route) {
+    return 'https://galaxycollapse.com/$route';
+  }
+
+  Future<void> doLogin() async {
+    final String loginName = _usernameController.text;
+    final String loginPassword = _passwordController.text;
+    final Map<String, dynamic> obj = {
+      'login': loginName,
+      'password': loginPassword,
+    };
+    final String js = jsonEncode(obj);
+
+    try {
+      final response = await http.post(
+        Uri.parse(buildPath("api/login")),
+        headers: {'Content-Type': 'application/json'},
+        body: js,
+      );
+
+      final Map<String, dynamic> res = jsonDecode(response.body);
+      print("Parsed response data: $res"); // Print the parsed response as a map
+      // Check if `id` is -1, indicating failed login or unverified account
+      if (res['id'] == -1) 
+      {
+        setState(() {
+          message = 'Login failed: Incorrect credentials or account unverified';
+        });
+      } 
+      else if (res['id'] != null && res['id'].toString().isNotEmpty) 
+      {
+        // Login is successful if `id` is not -1
+        final user = {
+          'firstName': res['firstName'],
+          'lastName': res['lastName'],
+          'email': res['email'],
+          'id': res['id'],
+        };
+
+        setState(() {
+          message = '';
+        });
+
+        // Navigate to AnalyzePage and pass the user data
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AnalyzePage(user: user),
+          ),
+        );
+      }
+      else
+      {
+        setState(() {
+          message = 'Incorrect user credentials or verification needed';
+        });
+      }
+    } 
+    catch (error) {
       setState(() {
-        message = 'Incorrect user credentials or verification needed';
+        message = 'An error occurred: ${error.toString()}';
       });
     }
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -64,7 +120,7 @@ class LoginFormState extends State<LoginForm> {
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () {
-            // Navigate to Register screen
+            Navigator.pushNamed(context, '/register'); // Navigate to Register page
           },
           child: const Text(
             'Register Now',
@@ -74,7 +130,7 @@ class LoginFormState extends State<LoginForm> {
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () {
-            // Navigate to Reset Password screen
+            Navigator.pushNamed(context, '/resetpassword'); // Navigate to Reset Password page
           },
           child: const Text(
             'Reset Password',
@@ -84,7 +140,7 @@ class LoginFormState extends State<LoginForm> {
         const SizedBox(height: 10),
         GestureDetector(
           onTap: () {
-            // Navigate to Resend Verification screen
+            Navigator.pushNamed(context, '/resend'); // Navigate to Resend Email Verification page
           },
           child: const Text(
             'Resend Email Verification',
@@ -95,4 +151,3 @@ class LoginFormState extends State<LoginForm> {
     );
   }
 }
-

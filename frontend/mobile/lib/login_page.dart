@@ -7,17 +7,17 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Matches the dark background
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
               'assets/football.JPG',
-              width: 150, // Adjust as needed
+              width: 150,
             ),
             const SizedBox(height: 20),
-            const LoginForm(),
+            LoginForm(),
           ],
         ),
       ),
