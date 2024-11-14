@@ -13,7 +13,7 @@ function Analyze()
     const userId:string = JSON.parse(userData).id;
     
     const nfc = [
-                "/--NFC--", "FA/Free Agents", "ARI/Arizona Cardinals", "ATL/Atlanta Falcons", "CAR/Carolina Panthers", "CHI/Chicago Bears",
+                "/--NFC--", "/All Teams", "FA/Free Agents", "ARI/Arizona Cardinals", "ATL/Atlanta Falcons", "CAR/Carolina Panthers", "CHI/Chicago Bears",
                 "DAL/Dallas Cowboys", "DET/Detroit Lions", "GB/Green Bay Packers", "LAR/Los Angeles Rams",
                 "MIN/Minnesota Vikings", "NO/New Orleans Saints", "NYG/New York Giants", "PHI/Philly Eagles",
                 "SF/San Fran 49ers", "SEA/Seattle Seahawks", "TB/Tampa Bay Buccs", "WAS/Washington Commanders"
@@ -213,6 +213,9 @@ function Analyze()
         document.getElementById('nfc')!.removeAttribute('disabled');
         document.getElementById('afc')!.removeAttribute('disabled');
 
+        (document.getElementById('afc')! as HTMLInputElement).value = "";
+        (document.getElementById('nfc')! as HTMLInputElement).value = "";
+
         let obj = {playerName, position, team};
         let js = JSON.stringify(obj);
 
@@ -302,10 +305,8 @@ function Analyze()
                     <option>TE</option>
                 </select>
 
-                <div>
-                    <input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/>
-                </div>
-
+                <input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/>
+                
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
                     {searchResults.map((info) => (
