@@ -190,6 +190,7 @@ app.post('/api/getrosters', async (req, res, next) => {
 
           return {
             RosterName: roster.RosterName,
+            RosterId: roster._id,
             players: players
           };
 
