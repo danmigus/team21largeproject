@@ -115,6 +115,10 @@ ul {
   width: 100px;
 }
 
+#searchButton, #searchPlayers {
+  margin: 10px;
+}
+
 #searchButton:hover {
   background-color: rgb(167, 163, 160);
 }

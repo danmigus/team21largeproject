@@ -285,7 +285,9 @@ function Analyze()
                 <div><h2> 🔍 Search </h2></div>
                 <div>
                     <input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} />
+                    <input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/>
                 </div>
+
 
                 <select id="nfc" className="selectTeam" onChange={handleSearchTeam} onClick={(e) => e.currentTarget.nextElementSibling!.setAttribute('disabled', 'true')}>
                     {nfc.map((team) => (
@@ -306,8 +308,6 @@ function Analyze()
                     <option>RB</option>
                     <option>TE</option>
                 </select>
-
-                <input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/>
 
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
@@ -359,7 +359,7 @@ function Analyze()
                 <div id="rosterList">
                     {rosters.map((roster) => (
                         <div className="roster">
-                            <h3 onClick={openRosterPlayersUL} >{roster.RosterName} ➤ </h3>
+                            <h3 style={{width: "100%"}} onClick={openRosterPlayersUL} >{roster.RosterName} ➤ </h3>
 
                             <ul id="rosterPlayers" style={{padding: "1px", display: "none"}}>
                             {roster.players.map((player:any) => (
