@@ -211,16 +211,19 @@ app.post('/api/getrosters', async (req, res, next) => {
 
 app.post('/api/searchplayer', async (req, res, next) => {
 
-  // incoming: search, optional position, optional team
+  // incoming: search, optional position, optional team, optional pageIndex, optional resultsPerPage
   // outgoing: playersData, error
 
-  let { playerName, position, team } = req.body;
+  let { playerName, position, team, pageIndex, resultsPerPage } = req.body;
   let error = ''; 
   let playersData = [];
 
   try
   {
     if (!playerName) playerName = '';
+    if (!pageIndex || pageIndex < 0) pageIndex = 0; // Default to the first page if not provided or invalid
+    if (!resultsPerPage || resultsPerPage <= 0) resultsPerPage = 12; // Default to 12 results per page if not provided or invalid
+
     const db = client.db();
 
     // Build the search query with conditional filters
@@ -228,7 +231,6 @@ app.post('/api/searchplayer', async (req, res, next) => {
       player_name: { $regex: playerName, $options: 'i' }
     };
 
-    // Add position and team filters if specified
     if (position) {
       query.player_position_id = position;
     }
@@ -236,19 +238,27 @@ app.post('/api/searchplayer', async (req, res, next) => {
       query.player_team_id = team;
     }
 
-    playersData = await db.collection('Players').find(query).project({
-      player_name: 1, 
-      player_team_id: 1, 
-      player_image_url: 1, 
-      rank_ecr: 1, 
-      player_position_id: 1
-    }).toArray();
+    // calculate the number of players to skip
+    const skip = pageIndex * resultsPerPage;
+
+    playersData = await db.collection('Players')
+      .find(query)
+      .project({
+        player_name: 1, 
+        player_team_id: 1, 
+        player_image_url: 1, 
+        rank_ecr: 1, 
+        player_position_id: 1
+      })
+      .skip(skip) // skip ahead amount
+      .limit(resultsPerPage) // limited number of page results
+      .toArray();
 
     if (playersData.length === 0) {
       error = "There are no players matching the search criteria.";
     }
   }
-  catch(e)
+  catch (e)
   {
     error = e.toString(); 
   }
@@ -256,7 +266,6 @@ app.post('/api/searchplayer', async (req, res, next) => {
   const ret = { error: error, players: playersData }; 
   res.status(200).json(ret); 
 });
-
 app.post('/api/resend', async (req, res, next) =>
   {
     const { email } = req.body;
