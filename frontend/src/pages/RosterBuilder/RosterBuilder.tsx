@@ -9,20 +9,21 @@ import {useUserInfo} from "../../util/userUtil.ts";
 import {ModalContext} from "../../util/modal.ts";
 import NewRosterModal from "../../modals/NewRosterModal/NewRosterModal.tsx";
 import SelectRosterModal from "../../modals/SelectRosterModal/SelectRosterModal.tsx";
+import FilterModal from "../../modals/FilterModal/FilterModal.tsx";
+import TextInput from "../../components/TextInput/TextInput.tsx";
 
 export default function RosterBuilder() {
   const { id: userId } = useUserInfo()
   const setModal = useContext(ModalContext)
 
   const [curRoster, setCurRoster] = useState<string | null>(null)
-  const curRosterObj = userRosters?.find((it) => it.RosterName === curRoster)
 
   // Player search
   const [liveSearchQuery, setLiveSearchQuery] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const searchQueryDebounce = useRef<ReturnType<typeof setTimeout>>()
+  const searchQueryDebounce = useRef<ReturnType<typeof setTimeout> | null>()
 
-  const { data: searchData } = useQuery({
+  const { data: searchData, isPending: isSearchPending } = useQuery({
     queryKey: [searchQuery],
     queryFn: async () => {
       if (searchQuery.trim() === '') return []
@@ -48,6 +49,7 @@ export default function RosterBuilder() {
       return (await resp.json()).rosters
     },
   })
+  const curRosterObj = userRosters?.find((it) => it.RosterName === curRoster)
 
   const { mutate: addPlayerToRoster } = useMutation({
     mutationFn: (player: string) => {
@@ -59,7 +61,7 @@ export default function RosterBuilder() {
     },
     onSuccess: () => {
       // Refresh roster on success
-      setTimeout(() => refetchRosters(), 250)
+      setTimeout(() => refetchRosters(), 100)
     }
   })
 
@@ -73,7 +75,7 @@ export default function RosterBuilder() {
     },
     onSuccess: () => {
       // Refresh roster on success
-      setTimeout(() => refetchRosters(), 250)
+      setTimeout(() => refetchRosters(), 100)
     }
   })
 
@@ -84,6 +86,7 @@ export default function RosterBuilder() {
     setLiveSearchQuery(e.target.value)
     searchQueryDebounce.current = setTimeout(() => {
       setSearchQuery(e.target.value)
+      searchQueryDebounce.current = null
     }, 1000)
   }
 
@@ -92,7 +95,7 @@ export default function RosterBuilder() {
       <NewRosterModal
         onSuccess={(newRosterName) => {
           setCurRoster(newRosterName)
-          setTimeout(() => refetchRosters(), 250)
+          setTimeout(() => refetchRosters(), 100)
         }}
       />
     )
@@ -160,25 +163,27 @@ export default function RosterBuilder() {
           )}
 
           {/* Regular view - roster selected with players */}
-          {curRosterObj?.players.length > 0 &&
-            curRosterObj.players.map((it) => (
-              <PlayerCard
-                playerName={it.player_name}
-                playerImageUrl={it.player_image_url}
-                playerPositionId={it.player_position_id}
-                playerTeamId={it.player_team_id}
-              >
-                <Button
-                  color="white"
-                  onClick={() => {
-                    removePlayerFromRoster(it._id)
-                  }}
+          {curRosterObj?.players.length > 0 && (
+            <div className={styles.sidePlayerList}>
+              {curRosterObj.players.map((it) => (
+                <PlayerCard
+                  playerName={it.player_name}
+                  playerImageUrl={it.player_image_url}
+                  playerPositionId={it.player_position_id}
+                  playerTeamId={it.player_team_id}
                 >
-                  Remove
-                </Button>
-              </PlayerCard>
-            ))
-          }
+                  <Button
+                    color="white"
+                    onClick={() => {
+                      removePlayerFromRoster(it._id)
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </PlayerCard>
+              ))}
+            </div>
+          )}
 
         </div>
 
@@ -188,29 +193,49 @@ export default function RosterBuilder() {
             <div className={styles.sideHeader}>
               <h3>PLAYERS</h3>
               <div className={styles.sideControls}>
-                <input type="text" placeholder="Search..." value={liveSearchQuery} onChange={handleSearchTextInput} />
-                <Button color="white">Filters</Button>
+                <TextInput type="text" placeholder="Search..." value={liveSearchQuery} onChange={handleSearchTextInput} />
+                <Button color="white" onClick={() => setModal(<FilterModal />)} stretch>Filters</Button>
               </div>
             </div>
 
-            <div className={styles.sidePlayerList}>
-              {searchData?.players?.map((it) => (
-                <PlayerCard
-                  playerName={it.player_name}
-                  playerImageUrl={it.player_image_url}
-                  playerPositionId={it.player_position_id}
-                  playerTeamId={it.player_team_id}
-                >
-                  <Button
-                    color="white"
-                    onClick={() => addPlayerToRoster(it._id)}
-                    disabled={!curRoster}
+            {/* Empty search */}
+            {liveSearchQuery.trim() === '' && (
+              <div className={styles.noRostersContainer}>
+                <span style={{fontSize: '1.25rem', fontWeight: 'bold'}}>You're not searching for anything!</span>
+                <span style={{color: '#ffffffcc', paddingBottom: '1rem'}}>Begin your search above ⬆️</span>
+              </div>
+            )}
+
+            {/* Search query but no results */}
+            {(liveSearchQuery.trim() !== '' && searchData?.players?.length === 0 && liveSearchQuery === searchQuery) && (
+              <div className={styles.noRostersContainer}>
+                <span style={{fontSize: '1.25rem', fontWeight: 'bold'}}>Your search came up blank!</span>
+                <span style={{color: '#ffffffcc', paddingBottom: '1rem'}}>Try searching for someone else</span>
+              </div>
+            )}
+
+            {/* Search results present */}
+            {(liveSearchQuery.trim() !== '' && !isSearchPending && liveSearchQuery === searchQuery) && (
+              <div className={styles.sidePlayerList}>
+                {searchData?.players?.map((it) => (
+                  <PlayerCard
+                    playerName={it.player_name}
+                    playerImageUrl={it.player_image_url}
+                    playerPositionId={it.player_position_id}
+                    playerTeamId={it.player_team_id}
                   >
-                    Add
-                  </Button>
-                </PlayerCard>
-              ))}
-            </div>
+                    <Button
+                      color="white"
+                      onClick={() => addPlayerToRoster(it._id)}
+                      disabled={!curRoster}
+                    >
+                      Add
+                    </Button>
+                  </PlayerCard>
+                ))}
+              </div>
+            )}
+
           </div>
 
       </div>
