@@ -65,12 +65,12 @@ async function sendEmail (req, res, next) {
 
 app.post('/api/newroster', async (req, res, next) =>{
 
-  //incoming: userId, rosterName
-  //outgoing: error
+  // incoming: userId, rosterName
+  // outgoing: error
 
   const { userId, rosterName } = req.body; 
 
-  const newRoster = {RosterName:rosterName,UserId:userId,players:[]}; 
+  const newRoster = { RosterName:rosterName, UserId:userId, players:[] }; 
   var error = ''; 
 
   try
@@ -78,40 +78,36 @@ app.post('/api/newroster', async (req, res, next) =>{
     const db = client.db();
     const result = db.collection('Rosters').insertOne(newRoster); 
   }
-  catch(e)
+  catch (e)
   {
     error = e.toString();
   }
 
-  var ret = {error:error}; 
+  var ret = { error : error }; 
   res.status(200).json(ret); 
-
 }); 
 
 app.post('/api/addtoroster', async (req, res, next) =>
   {
-      //incoming: userId, rosterId, playerId
-      //outgoing: error
+      // incoming: userId, rosterId, playerId
+      // outgoing: error
       
       const { userId, rosterId, playerId }= req.body; 
       let error = ''; 
 
       try
       {
-
         const db = client.db();
 
         const result = await db.collection('Rosters').updateOne(
-          {_id: new ObjectId(rosterId), UserId:userId},
-          {$push:{players:playerId} }
+          { _id: new ObjectId(rosterId), UserId : userId },
+          { $push:{ players : playerId } }
 
         ); 
 
-        if(result.matchedCount === 0){
+        if (result.matchedCount === 0){
           error = "This roster does not exist."; 
         }
-
-
       }
       catch(e)
       {
@@ -120,8 +116,6 @@ app.post('/api/addtoroster', async (req, res, next) =>
 
       const ret = {error:error}; 
       res.status(200).json(ret); 
-  
-  
 });
     
   app.post('/api/removefromroster', async (req, res, next) =>
@@ -171,7 +165,6 @@ app.post('/api/getrosters', async (req, res, next) => {
 
   try 
   {
-
     const db = client.db();
 
     const rosters = await db.collection('Rosters').find({ UserId: userId }).toArray();
@@ -193,13 +186,9 @@ app.post('/api/getrosters', async (req, res, next) => {
             RosterId: roster._id,
             players: players
           };
-
         })
-
       );
-
     }
-
   } catch (e) 
   {
     error = e.toString();
@@ -211,7 +200,7 @@ app.post('/api/getrosters', async (req, res, next) => {
 
 app.post('/api/searchplayer', async (req, res, next) => {
 
-  // incoming: search, optional position, optional team, optional pageIndex, optional resultsPerPage
+  // incoming: optional search, optional position, optional team, optional pageIndex, optional resultsPerPage
   // outgoing: playersData, error
 
   let { playerName, position, team, pageIndex, resultsPerPage } = req.body;
@@ -226,7 +215,7 @@ app.post('/api/searchplayer', async (req, res, next) => {
 
     const db = client.db();
 
-    // Build the search query with conditional filters
+    // build the search query with conditional filters
     let query = {
       player_name: { $regex: playerName, $options: 'i' }
     };
@@ -266,6 +255,7 @@ app.post('/api/searchplayer', async (req, res, next) => {
   const ret = { error: error, players: playersData }; 
   res.status(200).json(ret); 
 });
+
 app.post('/api/resend', async (req, res, next) =>
   {
     const { email } = req.body;
@@ -275,7 +265,7 @@ app.post('/api/resend', async (req, res, next) =>
     console.log("New encoded token:" + token);
     const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}`;
 
-    req.body = { email: email, tokenUrl: tokenUrl};
+    req.body = { email : email, tokenUrl : tokenUrl};
     await sendEmail(req, res);
 
     var error = '';
@@ -284,7 +274,7 @@ app.post('/api/resend', async (req, res, next) =>
     {
       const db = client.db(); 
       
-      const updateToken = await db.collection('Users').updateOne({Email: email}, {$set: {Token: token}})
+      const updateToken = await db.collection('Users').updateOne({ Email: email }, {$set: { Token: token }})
   
       error = "Updated Token";
     }
@@ -295,28 +285,26 @@ app.post('/api/resend', async (req, res, next) =>
 
     var ret = { error : error };
     res.status(200).json(ret);  
-
   });
 
 app.post('/api/register', async (req, res, next) =>
   {
-    
     // incoming: login, password, firstName, lastName, email
     // outgoing: error 
 
     const { us, pass, f, l , em} = req.body; 
 
     const jwt = require('jsonwebtoken');
-    const token = jwt.sign({ em }, `${secretKey}`, { expiresIn: '15m'});
+    const token = jwt.sign({ em }, `${ secretKey }`, { expiresIn: '15m'});
     console.log("Encoded token:" + token);
     const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}`;
 
     let verificationFlag = false;
 
-    const newUser = {Login:us,Password:pass,FirstName:f,LastName:l, Email:em, Token: token, VerificationFlag: verificationFlag}; 
+    const newUser = { Login:us, Password:pass, FirstName:f, LastName:l, Email:em, Token: token, VerificationFlag: verificationFlag}; 
     var error = '';
 
-    req.body = {email: em, tokenUrl: tokenUrl};
+    req.body = { email: em, tokenUrl: tokenUrl };
     await sendEmail(req, res);
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -327,7 +315,6 @@ app.post('/api/register', async (req, res, next) =>
     
     try
     {
-
       const db = client.db(); 
       
       const existingUser = await db.collection('Users').findOne({
@@ -340,24 +327,20 @@ app.post('/api/register', async (req, res, next) =>
         // Insert new user if no duplicates found
         await db.collection('Users').insertOne(newUser); 
       }
-
     }
     catch(e)
     {
-
       error = e.toString(); 
-
     }
 
     var ret = { error : error };
     res.status(200).json(ret);  
-
   });
 
 app.get('/api/verify', async (req, res, next) =>
   {
     var error = '';
-	  const jwt = require('jsonwebtoken');
+    const jwt = require('jsonwebtoken');
     try
     {
       const db = client.db(); 
@@ -379,14 +362,11 @@ app.get('/api/verify', async (req, res, next) =>
       }
       error = 'Successfully verified';
     }
-
     catch(e)
     {
       error = e.toString(); 
       console.error("Failed token verification");
     }
-  
-    //var ret = { error:error};
   });
   
 app.post('/api/resetpassword', async (req, res, next) =>
@@ -621,7 +601,6 @@ app.post('/api/addplayers', async (req, res) =>
 
   var ret = { error : error };
   res.status(200).json(ret); 
-
 });
 
   
