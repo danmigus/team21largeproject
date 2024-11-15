@@ -70,7 +70,7 @@ app.post('/api/newroster', async (req, res, next) =>{
 
   const { userId, rosterName } = req.body; 
 
-  const newRoster = { RosterName:rosterName, UserId:userId, players:[] }; 
+  const newRoster = { RosterName : rosterName, UserId : userId, players : [] }; 
   var error = ''; 
 
   try
@@ -92,7 +92,7 @@ app.post('/api/addtoroster', async (req, res, next) =>
       // incoming: userId, rosterId, playerId
       // outgoing: error
       
-      const { userId, rosterId, playerId }= req.body; 
+      const { userId, rosterId, playerId } = req.body; 
       let error = ''; 
 
       try
@@ -105,25 +105,25 @@ app.post('/api/addtoroster', async (req, res, next) =>
 
         ); 
 
-        if (result.matchedCount === 0){
+        if (result.matchedCount === 0) {
           error = "This roster does not exist."; 
         }
       }
-      catch(e)
+      catch (e)
       {
         error = e.toString(); 
       }
 
-      const ret = {error:error}; 
+      const ret = { error : error }; 
       res.status(200).json(ret); 
 });
     
   app.post('/api/removefromroster', async (req, res, next) =>
     {
-      //incoming: userId, rosterId, playerId
-      //outgoing: error
+      // incoming: userId, rosterId, playerId
+      // outgoing: error
       
-      const { userId, rosterId, playerId }= req.body; 
+      const { userId, rosterId, playerId } = req.body; 
       let error = ''; 
 
       try
@@ -132,23 +132,23 @@ app.post('/api/addtoroster', async (req, res, next) =>
         const db = client.db();
 
         const result = await db.collection('Rosters').updateOne(
-          {_id: new ObjectId(rosterId), UserId:userId},
-          {$pull:{players:playerId} }
+          {_id: new ObjectId(rosterId), UserId : userId },
+          {$pull:{ players : playerId } }
 
         ); 
 
-        if(result.matchedCount === 0){
+        if (result.matchedCount === 0) {
           error = "This roster does not exist."; 
         }
 
 
       }
-      catch(e)
+      catch (e)
       {
         error = e.toString(); 
       }
 
-      const ret = {error:error}; 
+      const ret = { error : error }; 
       res.status(200).json(ret); 
   
   
@@ -194,7 +194,7 @@ app.post('/api/getrosters', async (req, res, next) => {
     error = e.toString();
   }
 
-  const ret = { error: error, rosters: rostersData };
+  const ret = { error : error, rosters : rostersData };
   res.status(200).json(ret);
 });
 
@@ -252,7 +252,7 @@ app.post('/api/searchplayer', async (req, res, next) => {
     error = e.toString(); 
   }
 
-  const ret = { error: error, players: playersData }; 
+  const ret = { error : error, players : playersData }; 
   res.status(200).json(ret); 
 });
 
@@ -274,7 +274,7 @@ app.post('/api/resend', async (req, res, next) =>
     {
       const db = client.db(); 
       
-      const updateToken = await db.collection('Users').updateOne({ Email: email }, {$set: { Token: token }})
+      const updateToken = await db.collection('Users').updateOne({ Email : email }, {$set: { Token : token }})
   
       error = "Updated Token";
     }
@@ -301,10 +301,10 @@ app.post('/api/register', async (req, res, next) =>
 
     let verificationFlag = false;
 
-    const newUser = { Login:us, Password:pass, FirstName:f, LastName:l, Email:em, Token: token, VerificationFlag: verificationFlag}; 
+    const newUser = { Login : us, Password : pass, FirstName : f, LastName : l, Email : em, Token : token, VerificationFlag : verificationFlag}; 
     var error = '';
 
-    req.body = { email: em, tokenUrl: tokenUrl };
+    req.body = { email : em, tokenUrl : tokenUrl };
     await sendEmail(req, res);
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -318,7 +318,7 @@ app.post('/api/register', async (req, res, next) =>
       const db = client.db(); 
       
       const existingUser = await db.collection('Users').findOne({
-        $or: [{ Login: us }, { Email: em }]
+        $or: [{ Login : us }, { Email : em }]
       });
   
       if (existingUser) {
@@ -350,13 +350,13 @@ app.get('/api/verify', async (req, res, next) =>
       if (req.query.passwordReset ===  "yes")
       {
         // resetPasswordSuccess is the page where user sets new pass.
-        const updatePasswordToken = await db.collection('Users').updateOne({Email: decodedToken.email}, {$set: {PasswordReset: true}})
+        const updatePasswordToken = await db.collection('Users').updateOne({ Email: decodedToken.email }, { $set: { PasswordReset: true }})
         console.log("Redirecting user to set password...");
         res.redirect('https://galaxycollapse.com/setpassword');
       }
       else
       {
-        const changeFlag = await db.collection('Users').updateOne({Email: decodedToken.em}, {$set: {VerificationFlag: true}})
+        const changeFlag = await db.collection('Users').updateOne({ Email: decodedToken.em }, { $set: { VerificationFlag: true }})
         console.log("Redirecting user to login...");
         res.redirect('https://galaxycollapse.com');
       }
@@ -384,7 +384,7 @@ app.post('/api/resetpassword', async (req, res, next) =>
 
     req.body = { email: email, tokenUrl: tokenUrl };
     await sendEmail(req, res);
-    const updatePasswordToken = await db.collection('Users').updateOne({Email: email}, {$set: {PasswordReset: false}})
+    const updatePasswordToken = await db.collection('Users').updateOne({ Email: email }, {$set: { PasswordReset: false }})
   }
 
   catch(e)
@@ -406,11 +406,11 @@ app.post('/api/setpassword', async (req, res, next) =>
     {
       const db = client.db(); 
       
-      const results = await db.collection('Users').find({Email: email}).toArray();
+      const results = await db.collection('Users').find({ Email: email }).toArray();
 
       if (results[0].PasswordReset === true )
       {
-        const updatePassword = await db.collection('Users').updateOne({Email: email}, {$set: {Password: newPassword, PasswordReset: false}})
+        const updatePassword = await db.collection('Users').updateOne({ Email: email }, {$set: { Password: newPassword, PasswordReset: false }})
         e = 'Password reset complete';
       }
       else
@@ -436,7 +436,7 @@ app.post('/api/login', async (req, res, next) =>
 
   try
   {
-    const results = await db.collection('Users').find({Login:login,Password:password}).toArray();
+    const results = await db.collection('Users').find({ Login : login, Password : password }).toArray();
 
     var id = -1;
     var fn = '';
@@ -461,7 +461,7 @@ app.post('/api/login', async (req, res, next) =>
     error = e.toString(); 
   }
 
-  var ret = { id:id, email:em, firstName:fn, lastName:ln, error:''};
+  var ret = { id : id, email : em, firstName : fn, lastName : ln, error : '' };
   res.status(200).json(ret);
 });
 
@@ -591,9 +591,7 @@ app.post('/api/addplayers', async (req, res) =>
         { upsert: true }
       );
     }
-    
-    
-  }catch(e){
+  } catch (e) {
 
     error = e.toString(); 
 
