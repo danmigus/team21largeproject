@@ -1,14 +1,28 @@
 .card {
   display: flex;
-  gap: 0.5rem;
+  gap: 2rem;
+  justify-content: space-between;
   width: 100%;
   background-color: #1a1a1a;
   border: solid 0.25rem #363636;
-  padding: 0.5rem 1rem;
   font-size: 1.25rem;
+  padding: 0 1rem 0 0.5rem;
   font-weight: bold;
+  gap: 1rem;
 
   & img {
-    height: 1.5rem;
+    height: 4rem;
+    align-self: end;
   }
+}
+
+.playerDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.cardSide {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }

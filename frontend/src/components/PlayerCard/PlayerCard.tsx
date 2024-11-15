@@ -9,11 +9,19 @@ interface PlayerCardProps {
   children: ReactNode | ReactNode[]
 }
 
-export default function PlayerCard({ playerName, playerTeamId, playerImageUrl, playerPositionId}: PlayerCardProps) {
+export default function PlayerCard({ playerName, playerTeamId, playerImageUrl, playerPositionId, children }: PlayerCardProps) {
   return (
     <div className={styles.card}>
-      <img src={playerImageUrl} />
-      <span>{playerName}</span>
+      <div className={styles.cardSide}>
+        <img src={playerImageUrl}/>
+        <div className={styles.playerDetails}>
+          <span>{playerName}</span>
+          <span style={{color: '#ffffffcc', fontSize: '1rem'}}>{`${playerPositionId} - ${playerTeamId}`}</span>
+        </div>
+      </div>
+      <div className={styles.cardSide}>
+        {children}
+      </div>
     </div>
   )
 }

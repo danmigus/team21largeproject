@@ -1,0 +1,12 @@
+.textbox {
+  all: unset;
+  padding: 0.25rem 0.5rem;
+  border-width: 0.25rem;
+  border-style: solid;
+  font-weight: bold;
+  box-sizing: border-box;
+  font-size: 1rem;
+  background-color: white;
+  border-color: lightgray;
+  color: black;
+}

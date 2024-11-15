@@ -11,7 +11,7 @@ function Analyze()
 
     const userData:any = localStorage.getItem("user_data")
     const userId:string = JSON.parse(userData).id;
-    
+
     const nfc = [
                 "/--NFC--", "/All Teams", "FA/Free Agents", "ARI/Arizona Cardinals", "ATL/Atlanta Falcons", "CAR/Carolina Panthers", "CHI/Chicago Bears",
                 "DAL/Dallas Cowboys", "DET/Detroit Lions", "GB/Green Bay Packers", "LAR/Los Angeles Rams",
@@ -308,13 +308,13 @@ function Analyze()
                 </select>
 
                 <input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/>
-                
+
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
                     {searchResults.map((info) => (
                         <li className="card" draggable onDragStart= {(e) => handleFromSearch(e, info)} onClick={(e)=> {handleFromSearch(e, info)}} style={{background: `no-repeat 5% url(${info.player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px"}}>
-                            <p className="playerTeam">{info.player_team_id}</p> 
-                            <p className="playerPosition">{info.player_position_id}</p> 
+                            <p className="playerTeam">{info.player_team_id}</p>
+                            <p className="playerPosition">{info.player_position_id}</p>
                             <p className="playerName"> {info.player_name} </p>
 
                         </li>
@@ -329,8 +329,8 @@ function Analyze()
                     {searchPlayersArray.map((card) => (
                         <div className="card" style={{background: `no-repeat 5% url(${JSON.parse(card).player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px", cursor: "pointer", position: "relative"}}>
                             <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromSearch")}>🗑️</button>
-                            <p className="playerTeam">{JSON.parse(card).player_team_id}</p> 
-                            <p className="playerPosition">{JSON.parse(card).player_position_id}</p> 
+                            <p className="playerTeam">{JSON.parse(card).player_team_id}</p>
+                            <p className="playerPosition">{JSON.parse(card).player_position_id}</p>
                             <p className="playerName"> {JSON.parse(card).player_name} </p>
                         </div>
                     ))}
@@ -343,8 +343,8 @@ function Analyze()
                     {rosterPlayersArray.map((card) => (
                         <div className="card" style={{background: `no-repeat 5% url(${JSON.parse(card).player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px", cursor: "pointer"}}>
                             <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromRoster")}>🗑️</button>
-                            <p className="playerTeam">{JSON.parse(card).player_team_id}</p> 
-                            <p className="playerPosition">{JSON.parse(card).player_position_id}</p> 
+                            <p className="playerTeam">{JSON.parse(card).player_team_id}</p>
+                            <p className="playerPosition">{JSON.parse(card).player_position_id}</p>
                             <p className="playerName"> {JSON.parse(card).player_name} </p>
                         </div>
                     ))}
@@ -364,8 +364,8 @@ function Analyze()
                             <ul id="rosterPlayers" style={{padding: "1px", display: "none"}}>
                             {roster.players.map((player:any) => (
                                 <div className="card" draggable onDragStart= {(e) => handleFromRoster(e, player)} onClick={(e)=> {handleFromRoster(e, player)}} style={{background: `no-repeat 5% url(${player.player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px"}}>
-                                    <p className="playerTeam">{player.player_team_id}</p> 
-                                    <p className="playerPosition">{player.player_position_id}</p> 
+                                    <p className="playerTeam">{player.player_team_id}</p>
+                                    <p className="playerPosition">{player.player_position_id}</p>
                                     <p className="playerName"> {player.player_name} </p>
                                 </div>
                             ))}

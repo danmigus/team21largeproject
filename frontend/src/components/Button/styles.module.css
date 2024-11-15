@@ -8,6 +8,8 @@
   border-style: solid;
   font-weight: bold;
   box-sizing: border-box;
+  font-size: 1rem;
+  transition: background-color 0.1s, border-color 0.1s;
 
   &:hover {
     cursor: pointer;
@@ -18,4 +20,19 @@
   background-color: white;
   border-color: lightgray;
   color: black;
+
+  &:hover {
+    background-color: #F1F1F1;
+    border-color: #AAAAAA;
+  }
+
+  &:disabled {
+    color: gray;
+
+    &:hover {
+      border-color: lightgray;
+      background-color: white;
+      cursor: not-allowed;
+    }
+  }
 }
