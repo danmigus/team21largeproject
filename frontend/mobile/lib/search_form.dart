@@ -7,7 +7,7 @@ class AnalyzeForm extends StatefulWidget {
 
   
 
-  AnalyzeForm({required this.user});
+  const AnalyzeForm({super.key, required this.user});
 
   @override
   _AnalyzeFormState createState() => _AnalyzeFormState();
@@ -99,7 +99,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
       children: [
         Text('Net Value: ${(searchEcr - rosterEcr).toStringAsFixed(2)}'),
         TextField(
-          decoration: InputDecoration(labelText: 'Enter player name'),
+          decoration: const InputDecoration(labelText: 'Enter player name'),
           onChanged: (text) {
             setState(() {
               playerName = text;
@@ -107,7 +107,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
           },
         ),
         DropdownButton<String>(
-          hint: Text("Select NFC Team"),
+          hint: const Text("Select NFC Team"),
           items: nfcTeams.map((team) {
             return DropdownMenuItem(value: team, child: Text(team));
           }).toList(),
@@ -118,7 +118,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
           },
         ),
         DropdownButton<String>(
-          hint: Text("Select AFC Team"),
+          hint: const Text("Select AFC Team"),
           items: afcTeams.map((team) {
             return DropdownMenuItem(value: team, child: Text(team));
           }).toList(),
@@ -129,7 +129,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
           },
         ),
         DropdownButton<String>(
-          hint: Text("Select Position"),
+          hint: const Text("Select Position"),
           items: ['QB', 'WR', 'RB', 'TE'].map((position) {
             return DropdownMenuItem(value: position, child: Text(position));
           }).toList(),
@@ -141,7 +141,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
         ),
         ElevatedButton(
           onPressed: searchPlayers,
-          child: Text('Submit'),
+          child: const Text('Submit'),
         ),
         ListView.builder(
           shrinkWrap: true,

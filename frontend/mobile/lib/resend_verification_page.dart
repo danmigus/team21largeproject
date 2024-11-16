@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'resend_verification_form.dart';
 
 class ResendVerificationPage extends StatelessWidget {
+  const ResendVerificationPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

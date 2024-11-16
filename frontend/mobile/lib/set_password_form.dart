@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class SetPasswordForm extends StatefulWidget {
+  const SetPasswordForm({super.key});
+
   @override
   _SetPasswordFormState createState() => _SetPasswordFormState();
 }

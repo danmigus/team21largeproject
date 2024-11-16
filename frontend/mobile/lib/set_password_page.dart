@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'set_password_form.dart';
 
 class SetPasswordPage extends StatelessWidget {
+  const SetPasswordPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
+
   @override
   _LoginFormState createState() => _LoginFormState();
 }
@@ -80,7 +82,7 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 20),
         TextField(
           controller: _usernameController,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Username',
             labelStyle: TextStyle(color: Colors.blue), // Change label color
             filled: true,
@@ -97,10 +99,10 @@ class _LoginFormState extends State<LoginForm> {
           obscureText: !_isPasswordVisible, // Use _isPasswordVisible to toggle visibility
           decoration: InputDecoration(
             labelText: 'Password',
-            labelStyle: TextStyle(color: Colors.blue), // Change label color
+            labelStyle: const TextStyle(color: Colors.blue), // Change label color
             filled: true,
             fillColor: Colors.white,
-            border: OutlineInputBorder(),
+            border: const OutlineInputBorder(),
             suffixIcon: IconButton(
               icon: Icon(
                 _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
