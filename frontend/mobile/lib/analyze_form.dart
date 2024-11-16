@@ -5,8 +5,6 @@ import 'dart:convert';
 class AnalyzeForm extends StatefulWidget {
   final Map<String, dynamic> user;
 
-  
-
   AnalyzeForm({required this.user});
 
   @override
@@ -16,59 +14,55 @@ class AnalyzeForm extends StatefulWidget {
 class _AnalyzeFormState extends State<AnalyzeForm> {
   // Controllers and State Variables
   String playerName = '';
-  String position = '';
-  String team = '';
-  double searchEcr = 0.0;
-  double rosterEcr = 0.0;
+  String? selectedNfcTeam;
+  String? selectedAfcTeam;
+  String? selectedPosition;
   List<Map<String, dynamic>> searchResults = [];
-  List<Map<String, dynamic>> rosters = [];
-  List<String> searchPlayersArray = [];
-  List<String> rosterPlayersArray = [];
-
-  String buildPath(String route) {
-    return 'https://galaxycollapse.com/$route';
-  }
 
   final List<String> nfcTeams = [
-    'ARI', 'ATL', 'CAR', 'CHI', 'DAL', 'DET', 'GB', 'LAR', 'MIN', 'NO', 'NYG', 'PHI', 'SF', 'SEA', 'TB', 'WAS'
+    'None', 'ARI', 'ATL', 'CAR', 'CHI', 'DAL', 'DET', 'GB', 'LAR', 'MIN', 'NO', 'NYG', 'PHI', 'SF', 'SEA', 'TB', 'WAS'
   ];
 
   final List<String> afcTeams = [
-    'BAL', 'BUF', 'CIN', 'CLE', 'DEN', 'HOU', 'IND', 'JAC', 'KC', 'LV', 'LAC', 'MIA', 'NE', 'NYJ', 'PIT', 'TEN'
+    'None', 'BAL', 'BUF', 'CIN', 'CLE', 'DEN', 'HOU', 'IND', 'JAC', 'KC', 'LV', 'LAC', 'MIA', 'NE', 'NYJ', 'PIT', 'TEN'
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    loadRosters();
-  }
-
-  Future<void> loadRosters() async {
-    try {
-      final response = await http.post(
-        Uri.parse(buildPath("api/getrosters")),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'userId': widget.user['id']}),
-      );
-
-      final data = jsonDecode(response.body);
-      setState(() {
-        rosters = List<Map<String, dynamic>>.from(data['rosters']);
-      });
-    } catch (error) {
-      print('Error loading rosters: $error');
-    }
-  }
+  final List<String> positions = ['None', 'QB', 'WR', 'RB', 'TE'];
 
   Future<void> searchPlayers() async {
+    if (playerName.isEmpty &&
+        (selectedNfcTeam == null || selectedNfcTeam == 'None') &&
+        (selectedAfcTeam == null || selectedAfcTeam == 'None') &&
+        (selectedPosition == null || selectedPosition == 'None')) {
+      // Show error dialog if no filters or player name is provided
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Input Error'),
+          content: Text('Please provide a player name or select a filter.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
     try {
       final response = await http.post(
         Uri.parse(buildPath("api/searchplayer")),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'playerName': playerName,
-          'position': position,
-          'team': team,
+          'position': selectedPosition != 'None' ? selectedPosition : '',
+          'team': selectedNfcTeam != 'None'
+              ? selectedNfcTeam
+              : selectedAfcTeam != 'None'
+                  ? selectedAfcTeam
+                  : '',
         }),
       );
 
@@ -81,25 +75,18 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
     }
   }
 
-  void handleSearchEcr(double ecr) {
-    setState(() {
-      searchEcr = ecr;
-    });
-  }
-
-  void handleRosterEcr(double ecr) {
-    setState(() {
-      rosterEcr = ecr;
-    });
+  String buildPath(String route) {
+    return 'https://galaxycollapse.com/$route';
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('Net Value: ${(searchEcr - rosterEcr).toStringAsFixed(2)}'),
         TextField(
-          decoration: InputDecoration(labelText: 'Enter player name'),
+          decoration: InputDecoration(
+            labelText: 'Enter player name',
+          ),
           onChanged: (text) {
             setState(() {
               playerName = text;
@@ -108,34 +95,39 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
         ),
         DropdownButton<String>(
           hint: Text("Select NFC Team"),
+          value: selectedNfcTeam,
           items: nfcTeams.map((team) {
             return DropdownMenuItem(value: team, child: Text(team));
           }).toList(),
           onChanged: (value) {
             setState(() {
-              team = value ?? '';
+              selectedNfcTeam = value != 'None' ? value : null;
+              selectedAfcTeam = null; // Reset AFC selection
             });
           },
         ),
         DropdownButton<String>(
           hint: Text("Select AFC Team"),
+          value: selectedAfcTeam,
           items: afcTeams.map((team) {
             return DropdownMenuItem(value: team, child: Text(team));
           }).toList(),
           onChanged: (value) {
             setState(() {
-              team = value ?? '';
+              selectedAfcTeam = value != 'None' ? value : null;
+              selectedNfcTeam = null; // Reset NFC selection
             });
           },
         ),
         DropdownButton<String>(
           hint: Text("Select Position"),
-          items: ['QB', 'WR', 'RB', 'TE'].map((position) {
-            return DropdownMenuItem(value: position, child: Text(position));
+          value: selectedPosition,
+          items: positions.map((pos) {
+            return DropdownMenuItem(value: pos, child: Text(pos));
           }).toList(),
           onChanged: (value) {
             setState(() {
-              position = value ?? '';
+              selectedPosition = value != 'None' ? value : null;
             });
           },
         ),
@@ -143,18 +135,23 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
           onPressed: searchPlayers,
           child: Text('Submit'),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: searchResults.length,
-          itemBuilder: (context, index) {
-            final player = searchResults[index];
-            return ListTile(
-              title: Text(player['player_name']),
-              subtitle: Text('${player['player_team_id']} - ${player['player_position_id']}'),
-            );
-          },
+        Expanded(
+          child: ListView.builder(
+            itemCount: searchResults.length,
+            itemBuilder: (context, index) {
+              final player = searchResults[index];
+              return ListTile(
+                title: Text(player['player_name']),
+                subtitle: Text('${player['player_team_id']} - ${player['player_position_id']}'),
+              );
+            },
+          ),
         ),
       ],
     );
   }
 }
+
+
+
+
