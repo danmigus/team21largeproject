@@ -75,6 +75,11 @@ function Register()
                 setMessage("Username or email already exists 😡");
                 return;
             }
+            else if (res.error === "Invalid email format")
+            {
+                setMessage("Invalid email format 😡");
+                return;
+            }
 
             let registrationForm = document.getElementById("registrationForm") as HTMLDivElement;
             registrationForm.style.display = "none";
