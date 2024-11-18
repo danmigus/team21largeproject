@@ -32,6 +32,7 @@ function Analyze()
             players: []
         }
     ]);
+
     useEffect(() => {
         async function mount () {
             try
@@ -47,6 +48,7 @@ function Analyze()
         mount();
     },[]);
 
+
     const [playerName, setSearchText] = useState('');
     const [position, setSearchPosition] = useState('');
     const [team, setSearchTeam] = useState('');
@@ -54,6 +56,7 @@ function Analyze()
     const [rosterPlayersArray, setRosterPlayers] = useState<string[]>([]);
     const [searchEcr, setSearchEcr] = useState('');
     const [rosterEcr, setRosterEcr] = useState('');
+    const [pageIndex, setPageIndex] = useState(0);
     const [searchResults,setResults] = useState([
         {
             _id: "",
@@ -65,6 +68,12 @@ function Analyze()
         }
     ]);
 
+    function handleSearch (e:any) : void
+    {
+        searchPlayers(e);
+        setPageIndex(0);
+    }
+    
     function handleSearchText( e: any ) : void
     {
         setSearchText( e.target.value );
@@ -218,7 +227,7 @@ function Analyze()
 
         let obj = {playerName, position, team};
         let js = JSON.stringify(obj);
-
+        
         try
         {
             snackbarController.set({ label: "Searching... 🤔" })
@@ -227,7 +236,7 @@ function Analyze()
 
             var res = JSON.parse(await response.text());
 
-            snackbarController.set({ label: "Search completed 🤓" });
+            snackbarController.set({ label: `Search completed 🤓 ${res.error}` });
             setResults(res.players);
         }
 
@@ -238,7 +247,7 @@ function Analyze()
             return;
         }
 
-        setSearchTeam('');
+        
     }
 
     async function loadRosters() : Promise<any[]>
@@ -273,7 +282,7 @@ function Analyze()
             {/* Header */}
             <PageHeader
               label="ANALYZE"
-              description="Replace this text with a short description"
+              description="Calculate your fantasy football trade value!"
             />
 
             <div style={{textAlign:"center"}}className="rainbow-text">
@@ -285,7 +294,7 @@ function Analyze()
                 <div><h2> 🔍 Search </h2></div>
                 <div>
                     <input type="text" id="searchPlayers" placeholder="Enter player name" onChange={handleSearchText} />
-                    <input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={searchPlayers}/>
+                    <input type="submit" id="searchButton" className="buttons" value = "Submit" onClick={handleSearch}/>
                 </div>
 
 

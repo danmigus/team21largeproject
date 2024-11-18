@@ -93,6 +93,7 @@ function Register()
 
     return(
         <div id="registerDiv"> 
+        <h2 id="thanksMessage" style={{display: "none"}}>Thank you. Please check your email for the verification link.</h2>
             <div id="registrationForm">
                 <h1> Registration 📝</h1>
                 <div id="registerResult">{registerMessage}</div>
@@ -109,10 +110,9 @@ function Register()
                 <br></br>
                 <input type="submit" id="registerButton" className="buttons" value = "Submit" onClick={doRegister}/>
                 <br></br>
+                <br></br>
+                <Link to="/" className="returnLink">Return to Login</Link>
             </div>
-            <h2 id="thanksMessage" style={{display: "none"}}>Thank you. Please check your email for the verification link.</h2>
-            <br></br>
-            <Link to="/" className="returnLink">Return to Login</Link>
         </div>
     );
 };

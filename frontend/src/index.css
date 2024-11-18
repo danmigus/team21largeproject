@@ -17,7 +17,7 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #64edf1;
   text-decoration: inherit;
 }
 a:hover {
@@ -49,8 +49,8 @@ button {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color: #eaeaeb;
+    background-color: #1b1a1a;
   }
   a:hover {
     color: #747bff;
