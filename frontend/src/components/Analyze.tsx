@@ -20,22 +20,6 @@ function Analyze()
         }
     ]);
 
-    useEffect(() => {
-        async function mount () {
-            try
-            {
-                const loadedRosters = await loadRosters();
-                setRosters(loadedRosters);
-            }
-            catch(error:any )
-            {
-                console.log(error);
-            }
-        }
-        mount();
-    },[]);
-
-
     const [playerName, setSearchText] = useState('');
     const [position, setSearchPosition] = useState('');
     const [team, setSearchTeam] = useState('');
@@ -55,10 +39,41 @@ function Analyze()
         }
     ]);
 
-    function handleSearch (e:any) : void
+    useEffect(() => {
+        async function mount () {
+            try
+            {
+                const loadedRosters = await loadRosters();
+                setRosters(loadedRosters);
+            }
+            catch(error:any )
+            {
+                console.log(error);
+            }
+        }
+        mount();
+    },[]);
+
+    useEffect(() => {
+        searchPlayers();
+    }, [pageIndex]);
+
+    function handleSearch () : void
     {
-        searchPlayers(e);
+        searchPlayers();
         setPageIndex(0);
+    }
+
+    async function handleNextPage (e: any): Promise<void>
+    {
+        e.preventDefault();
+        setPageIndex(pageIndex + 1);
+    }
+        
+    async function handlePreviousPage (e: any): Promise<void>
+    {
+        e.preventDefault();
+        setPageIndex(pageIndex - 1);
     }
     
     function handleSearchText( e: any ) : void
@@ -200,9 +215,9 @@ function Analyze()
         }
     }
 
-    async function searchPlayers(event:any) : Promise<void>
+    async function searchPlayers() : Promise<void>
     {
-        event.preventDefault();
+
         let revealResults = document.getElementById("searchResults") as HTMLDivElement;
         revealResults.style.display = "block";
 
@@ -212,7 +227,8 @@ function Analyze()
         (document.getElementById('afc')! as HTMLInputElement).value = "";
         (document.getElementById('nfc')! as HTMLInputElement).value = "";
 
-        let obj = {playerName, position, team};
+        let resultsPerPage = 12;
+        let obj = {playerName, position, team, pageIndex, resultsPerPage};
         let js = JSON.stringify(obj);
         
         try
@@ -304,6 +320,9 @@ function Analyze()
                     <option>RB</option>
                     <option>TE</option>
                 </select>
+
+                <button onClick={handlePreviousPage} disabled={(():boolean => {if(pageIndex === 0) {return true;} return false})()}> Prev Page</button>
+                <button onClick={handleNextPage}> Next Page </button>
 
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
