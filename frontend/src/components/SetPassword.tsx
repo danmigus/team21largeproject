@@ -68,9 +68,8 @@ function SetPassword()
                 <br></br>
                 <input type="submit" id="resetPasswordButton" className="buttons" value = "Submit" onClick={setNewPassword}/>
                 <br></br>
+                <Link to="/" className="returnLink">Return to Login</Link>
             </div>
-            <br></br>
-            <Link to="/" className="returnLink">Return to Login</Link>
         </div>
     );
 }

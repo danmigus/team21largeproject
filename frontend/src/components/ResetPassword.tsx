@@ -51,7 +51,7 @@ function ResetPassword()
     
     return(
         <div id="passwordResetDiv">
-            <div id="passwordResetForm">
+            <div id="passwordResetForm"> 
                 <h1> Reset Password 🔑</h1>
                 <div id="result">{message}</div>
                 <br></br>
@@ -59,9 +59,8 @@ function ResetPassword()
                 <br></br>
                 <input type="submit" id="resetPasswordButton" className="buttons" value = "Submit" onClick={resetPassword}/>
                 <br></br>
+                <Link to="/" className="returnLink">Return to Login</Link>
             </div>
-            <br></br>
-            <Link to="/" className="returnLink">Return to Login</Link>
         </div>
     );
 }

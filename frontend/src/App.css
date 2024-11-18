@@ -81,6 +81,19 @@ ul {
   text-align: center;
 }
 
+#passwordResetDiv, #passwordResetForm, #registrationForm {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-wrap: wrap;
+  flex-direction: column;
+  row-gap: 10px;
+}
+#registrationForm {
+  row-gap: 2px;
+}
+
 .playerImg {
   width: 10%;
   border: 0.5px white solid;
@@ -109,17 +122,18 @@ ul {
   width: 100px;
 }
 
-#searchButton {
+#searchButton, #resetPasswordButton, #registerButton {
   cursor: pointer;
   border-radius: 10px;
   width: 100px;
+
 }
 
 #searchButton, #searchPlayers {
   margin: 10px;
 }
 
-#searchButton:hover {
+#searchButton:hover, #resetPasswordButton:hover, #registerButton:hover{
   background-color: rgb(167, 163, 160);
 }
 
