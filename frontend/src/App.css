@@ -62,7 +62,7 @@ ul {
   }
 }
 
-.card {
+.card, .draggedCard {
   font-weight: bold;
   background-size: 100px !important;
   background-position: bottom !important;
@@ -79,6 +79,26 @@ ul {
   height: 150px;
   float: left;
   text-align: center;
+}
+
+.draggedCard:hover {
+  background: center no-repeat url("../src/assets/trash4.gif")  !important;
+  background-size: contain !important;
+  opacity: 80%;
+  transition: background 0.2s ease-in;
+  -moz-transition: background 0.2s ease-in;
+  -webkit-transition: background 0.2s ease-in;
+  -o-transition: background 0.2s ease-in;
+}
+
+.draggedCard:hover .playerName {
+  display: none;
+}
+.draggedCard:hover .playerTeam {
+  display: none;
+}
+.draggedCard:hover .playerPosition {
+  display: none;
 }
 
 #passwordResetDiv, #passwordResetForm, #registrationForm {
@@ -180,14 +200,15 @@ ul {
 }
 
 .deletePlayerButton {
-  float: right;
+  display: flex;
   border: dotted rgb(250, 81, 29) 2px;
   backdrop-filter: blur(10px);
   padding: 5px;
-  position: absolute;
   top: 0;
+  position: absolute;
   right: 0;
   z-index: 2;
+  justify-content: flex-end;
 }
 
 .playerImage {

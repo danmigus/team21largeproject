@@ -209,7 +209,7 @@ function Analyze()
     {
         e.preventDefault();
         console.log(typeof(rank_ecr));
-        e.currentTarget.parentElement.remove();
+        e.currentTarget.remove();
 
         if (from === "fromSearch")
         {
@@ -335,7 +335,7 @@ function Analyze()
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
                     {searchResults.map((info) => (
-                        <li className="card" draggable onDragStart= {(e) => handleFromSearch(e, info)} onClick={(e)=> {handleFromSearch(e, info)}} style={{background: `no-repeat 5% url(${info.player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px"}}>
+                        <li className="card" title="Add" draggable onDragStart= {(e) => handleFromSearch(e, info)} onClick={(e)=> {handleFromSearch(e, info)}} style={{background: `no-repeat 5% url(${info.player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px"}}>
                             <p className="playerTeam">{info.player_team_id}</p>
                             <p className="playerPosition">{info.player_position_id}</p>
                             <p className="playerName"> {info.player_name} </p>
@@ -350,8 +350,7 @@ function Analyze()
                 <h2> Search Value: {searchEcr} </h2>
                 <div className="dragHereBox" onDrop={handleFromSearchDrop} onDragOver={handleDragHere}>
                     {searchPlayersArray.map((card) => (
-                        <div className="card" style={{background: `no-repeat 5% url(${JSON.parse(card).player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px", cursor: "pointer", position: "relative"}}>
-                            <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromSearch")}>🗑️</button>
+                        <div className="draggedCard" title="Delete" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromSearch")} style={{background: `no-repeat 5% url(${JSON.parse(card).player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px", cursor: "pointer", position: "relative"}}>
                             <p className="playerTeam">{JSON.parse(card).player_team_id}</p>
                             <p className="playerPosition">{JSON.parse(card).player_position_id}</p>
                             <p className="playerName"> {JSON.parse(card).player_name} </p>
@@ -364,8 +363,7 @@ function Analyze()
                 <h2> Your Value: {rosterEcr} </h2>
                 <div className="dragHereBox" onDrop={handleFromRosterDrop} onDragOver={handleDragHere}>
                     {rosterPlayersArray.map((card) => (
-                        <div className="card" style={{background: `no-repeat 5% url(${JSON.parse(card).player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px", cursor: "pointer"}}>
-                            <button className="deletePlayerButton" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromRoster")}>🗑️</button>
+                        <div className="draggedCard" title="Delete" onClick={(e)=> deletePlayer(e, JSON.parse(card).rank_ecr, "fromRoster")} style={{background: `no-repeat 5% url(${JSON.parse(card).player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px", cursor: "pointer"}}>
                             <p className="playerTeam">{JSON.parse(card).player_team_id}</p>
                             <p className="playerPosition">{JSON.parse(card).player_position_id}</p>
                             <p className="playerName"> {JSON.parse(card).player_name} </p>
@@ -386,7 +384,7 @@ function Analyze()
 
                             <ul id="rosterPlayers" style={{padding: "1px", display: "none"}}>
                             {roster.players.map((player:any) => (
-                                <div className="card" draggable onDragStart= {(e) => handleFromRoster(e, player)} onClick={(e)=> {handleFromRoster(e, player)}} style={{background: `no-repeat 5% url(${player.player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px"}}>
+                                <div className="card" title="Add" draggable onDragStart= {(e) => handleFromRoster(e, player)} onClick={(e)=> {handleFromRoster(e, player)}} style={{background: `no-repeat 5% url(${player.player_image_url}), url('../src/assets/field.JPG')`, fontSize: "12px"}}>
                                     <p className="playerTeam">{player.player_team_id}</p>
                                     <p className="playerPosition">{player.player_position_id}</p>
                                     <p className="playerName"> {player.player_name} </p>
