@@ -1,4 +1,4 @@
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect, useContext, useRef} from 'react';
 import {useUserInfo} from "../util/userUtil.ts";
 import PageHeader from "./PageHeader/PageHeader.tsx";
 import {SnackbarContext} from "../util/snackbar.ts";
@@ -20,6 +20,7 @@ function Analyze()
         }
     ]);
 
+    const firstLoad = useRef(true);
     const [playerName, setSearchText] = useState('');
     const [position, setSearchPosition] = useState('');
     const [team, setSearchTeam] = useState('');
@@ -55,11 +56,18 @@ function Analyze()
     },[]);
 
     useEffect(() => {
+        console.log("Firstload is: " + firstLoad.current);
+        if (firstLoad.current === true)
+        {
+            console.log("Changing firstload: " + firstLoad.current);
+            return;
+        }
         searchPlayers();
     }, [pageIndex]);
 
     function handleSearch () : void
     {
+        firstLoad.current = false;
         searchPlayers();
         setPageIndex(0);
     }
