@@ -2,9 +2,10 @@ import {useContext} from "react";
 import {ModalContext} from "../../util/modal.ts";
 import Modal from "../Modal/Modal.tsx";
 import Button from "../../components/Button/Button.tsx";
+import {UserRoster} from "../../ApiTypes.ts";
 
 interface SelectRosterModalProps {
-  rosters: { RosterName: string, players: unknown[] }[]
+  rosters: UserRoster[]
   setRoster: (name: string) => void
 }
 

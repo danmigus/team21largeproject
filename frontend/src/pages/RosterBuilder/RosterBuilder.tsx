@@ -11,6 +11,7 @@ import NewRosterModal from "../../modals/NewRosterModal/NewRosterModal.tsx";
 import SelectRosterModal from "../../modals/SelectRosterModal/SelectRosterModal.tsx";
 import FilterModal from "../../modals/FilterModal/FilterModal.tsx";
 import TextInput from "../../components/TextInput/TextInput.tsx";
+import {Player, UserRoster} from "../../ApiTypes.ts";
 
 export default function RosterBuilder() {
   const { id: userId } = useUserInfo()
@@ -27,15 +28,15 @@ export default function RosterBuilder() {
   const [position, setPosition] = useState('')
   const [curPage, setCurPage] = useState(0)
   const [loadingMore, setLoadingMore] = useState(false)
-  const results = useRef([])
+  const results = useRef<Player[][]>([])
 
-  const selectSearchData = useCallback((data) => {
+  const selectSearchData = useCallback((data: Player[]): Player[] => {
     if (data.length === 0 && loadingMore) return results.current.flat()
     if (data.length === 0 && !loadingMore) return []
     if (results.current.length > 0) {
-      results.current[curPage] = data.players
+      results.current[curPage] = data
     } else {
-      results.current = [data.players]
+      results.current = [data]
     }
     setLoadingMore(false)
     return results.current.flat()
@@ -53,9 +54,9 @@ export default function RosterBuilder() {
       if (!resp.ok) throw new Error('Could not complete player search')
       return await resp.json()
     },
-    select: selectSearchData,
+    select: (data: { players: Player[] }) => selectSearchData(data.players),
     gcTime: 0,
-    placeholderData: () => [],
+    placeholderData: { players: [] },
   })
 
   useEffect(() => {
@@ -65,7 +66,7 @@ export default function RosterBuilder() {
 
   const { data: userRosters, refetch: refetchRosters } = useQuery({
     queryKey: ['userrosters', curRoster, userId],
-    queryFn: async () => {
+    queryFn: async (): Promise<UserRoster[]> => {
       const resp = await fetch(buildUrl('api/getrosters'), {
         method: 'POST',
         body: JSON.stringify({ userId }),
@@ -75,13 +76,13 @@ export default function RosterBuilder() {
       return (await resp.json()).rosters
     },
   })
-  const curRosterObj = userRosters?.find((it) => it.RosterName === curRoster)
+  const curRosterObj = userRosters?.find((it: UserRoster) => it.RosterName === curRoster)
 
   const { mutate: addPlayerToRoster } = useMutation({
     mutationFn: (player: string) => {
       return fetch(buildUrl('api/addtoroster'), {
         method: 'POST',
-        body: JSON.stringify({ userId, rosterId: curRosterObj.RosterId, playerId: player }),
+        body: JSON.stringify({ userId, rosterId: curRosterObj?.RosterId, playerId: player }),
         headers: { 'Content-Type': 'application/json' }
       })
     },
@@ -95,7 +96,7 @@ export default function RosterBuilder() {
     mutationFn: (playerId: string) => {
       return fetch(buildUrl('api/removefromroster'), {
         method: 'POST',
-        body: JSON.stringify({ userId, rosterId: curRosterObj.RosterId, playerId }),
+        body: JSON.stringify({ userId, rosterId: curRosterObj?.RosterId, playerId }),
         headers: { 'Content-Type': 'application/json' }
       })
     },
@@ -112,7 +113,6 @@ export default function RosterBuilder() {
     setLiveSearchQuery(e.target.value)
     searchQueryDebounce.current = setTimeout(() => {
       setSearchQuery(e.target.value)
-      searchQueryDebounce.current = -1
     }, 1000)
   }
 
@@ -128,7 +128,7 @@ export default function RosterBuilder() {
   }
 
   const openSelectRosterModal = () => {
-    setModal(<SelectRosterModal rosters={userRosters} setRoster={setCurRoster} />)
+    setModal(<SelectRosterModal rosters={userRosters ?? []} setRoster={setCurRoster} />)
   }
 
   return (
@@ -167,7 +167,7 @@ export default function RosterBuilder() {
           )}
 
           {/* User has rosters, but none selected */}
-          {(userRosters?.length > 0 && !curRoster) && (
+          {(userRosters && userRosters.length > 0 && !curRoster) && (
             <div className={styles.noRostersContainer}>
               <span style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>You don't have a roster selected!</span>
               <span style={{ color: '#ffffffcc', paddingBottom: '1rem'}}>Select one below</span>
@@ -189,9 +189,9 @@ export default function RosterBuilder() {
           )}
 
           {/* Regular view - roster selected with players */}
-          {curRosterObj?.players.length > 0 && (
+          {(curRosterObj && curRosterObj.players.length > 0) && (
             <div className={styles.sidePlayerList}>
-              {curRosterObj.players.map((it) => (
+              {curRosterObj.players.map((it: Player) => (
                 <PlayerCard
                   playerName={it.player_name}
                   playerImageUrl={it.player_image_url}

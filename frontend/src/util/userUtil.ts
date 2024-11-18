@@ -8,7 +8,7 @@ export function useUserInfo() {
   useEffect(() => {
     // Grab logged in user data
     const userDataRaw = localStorage.getItem('user_data');
-    const userData = JSON.parse(userDataRaw);
+    const userData = JSON.parse(userDataRaw ?? '{ id: -1 }');
 
     if (!userData || userData.id === -1) {
       // Not logged in - kick back to login screen

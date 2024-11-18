@@ -7,7 +7,7 @@ import {afc, nfc} from "../util/teams.ts";
 
 function Analyze()
 {
-    const { firstName: userFirstName, lastName: userLastName, logoutUser: doLogout } = useUserInfo()
+    useUserInfo()
     const snackbarController = useContext(SnackbarContext)
 
     const userData:any = localStorage.getItem("user_data")
@@ -77,13 +77,13 @@ function Analyze()
         e.preventDefault();
         setPageIndex(pageIndex + 1);
     }
-        
+
     async function handlePreviousPage (e: any): Promise<void>
     {
         e.preventDefault();
         setPageIndex(pageIndex - 1);
     }
-    
+
     function handleSearchText( e: any ) : void
     {
         setSearchText( e.target.value );
@@ -238,7 +238,7 @@ function Analyze()
         let resultsPerPage = 12;
         let obj = {playerName, position, team, pageIndex, resultsPerPage};
         let js = JSON.stringify(obj);
-        
+
         try
         {
             snackbarController.set({ label: "Searching... 🤔" })
@@ -258,7 +258,7 @@ function Analyze()
             return;
         }
 
-        
+
     }
 
     async function loadRosters() : Promise<any[]>

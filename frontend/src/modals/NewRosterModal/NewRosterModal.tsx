@@ -1,4 +1,3 @@
-import styles from './styles.module.css'
 import Modal from "../Modal/Modal.tsx";
 import {useContext, useEffect, useState} from "react";
 import {ModalContext} from "../../util/modal.ts";
