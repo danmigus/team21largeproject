@@ -2,7 +2,7 @@ import styles from './styles.module.css'
 import PageHeader from "../../components/PageHeader/PageHeader.tsx";
 import Button from "../../components/Button/Button.tsx";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {ChangeEvent, useContext, useRef, useState} from "react";
+import {ChangeEvent, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {buildUrl} from "../../util/api.ts";
 import PlayerCard from "../../components/PlayerCard/PlayerCard.tsx";
 import {useUserInfo} from "../../util/userUtil.ts";
@@ -21,21 +21,47 @@ export default function RosterBuilder() {
   // Player search
   const [liveSearchQuery, setLiveSearchQuery] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const searchQueryDebounce = useRef<ReturnType<typeof setTimeout> | null>()
+  const searchQueryDebounce = useRef<ReturnType<typeof setTimeout>>()
+  const [division, setDivision] = useState('afc')
+  const [team, setTeam] = useState('')
+  const [position, setPosition] = useState('')
+  const [curPage, setCurPage] = useState(0)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const results = useRef([])
 
-  const { data: searchData, isPending: isSearchPending } = useQuery({
-    queryKey: [searchQuery],
+  const selectSearchData = useCallback((data) => {
+    if (data.length === 0 && loadingMore) return results.current.flat()
+    if (data.length === 0 && !loadingMore) return []
+    if (results.current.length > 0) {
+      results.current[curPage] = data.players
+    } else {
+      results.current = [data.players]
+    }
+    setLoadingMore(false)
+    return results.current.flat()
+  }, [curPage, loadingMore])
+
+  const { data: searchData, isPending: isSearchPending, isPlaceholderData } = useQuery({
+    queryKey: [searchQuery, team, position, curPage],
     queryFn: async () => {
       if (searchQuery.trim() === '') return []
       const resp = await fetch(buildUrl('api/searchplayer'), {
         method: 'POST',
-        body: JSON.stringify({ playerName: searchQuery, position: '', team: '' }),
+        body: JSON.stringify({ playerName: searchQuery, position, team, pageIndex: curPage }),
         headers: {'Content-Type': 'application/json'}
       })
       if (!resp.ok) throw new Error('Could not complete player search')
       return await resp.json()
     },
+    select: selectSearchData,
+    gcTime: 0,
+    placeholderData: () => [],
   })
+
+  useEffect(() => {
+    setCurPage(0)
+    results.current = []
+  }, [searchQuery, division, team, position])
 
   const { data: userRosters, refetch: refetchRosters } = useQuery({
     queryKey: ['userrosters', curRoster, userId],
@@ -86,7 +112,7 @@ export default function RosterBuilder() {
     setLiveSearchQuery(e.target.value)
     searchQueryDebounce.current = setTimeout(() => {
       setSearchQuery(e.target.value)
-      searchQueryDebounce.current = null
+      searchQueryDebounce.current = -1
     }, 1000)
   }
 
@@ -194,7 +220,23 @@ export default function RosterBuilder() {
               <h3>PLAYERS</h3>
               <div className={styles.sideControls}>
                 <TextInput type="text" placeholder="Search..." value={liveSearchQuery} onChange={handleSearchTextInput} />
-                <Button color="white" onClick={() => setModal(<FilterModal />)} stretch>Filters</Button>
+                <Button
+                  color="white"
+                  onClick={() => setModal(
+                    <FilterModal
+                      initialDivision={division}
+                      initialTeam={team}
+                      initialPosition={position}
+                      updateFilters={(div, team, pos) => {
+                        setDivision(div)
+                        setTeam(team)
+                        setPosition(pos)
+                      }}
+                    />)}
+                  stretch
+                >
+                  Filters
+                </Button>
               </div>
             </div>
 
@@ -207,7 +249,7 @@ export default function RosterBuilder() {
             )}
 
             {/* Search query but no results */}
-            {(liveSearchQuery.trim() !== '' && searchData?.players?.length === 0 && liveSearchQuery === searchQuery) && (
+            {(liveSearchQuery.trim() !== '' && searchData?.length === 0 && liveSearchQuery === searchQuery && !isPlaceholderData) && (
               <div className={styles.noRostersContainer}>
                 <span style={{fontSize: '1.25rem', fontWeight: 'bold'}}>Your search came up blank!</span>
                 <span style={{color: '#ffffffcc', paddingBottom: '1rem'}}>Try searching for someone else</span>
@@ -215,25 +257,40 @@ export default function RosterBuilder() {
             )}
 
             {/* Search results present */}
-            {(liveSearchQuery.trim() !== '' && !isSearchPending && liveSearchQuery === searchQuery) && (
-              <div className={styles.sidePlayerList}>
-                {searchData?.players?.map((it) => (
-                  <PlayerCard
-                    playerName={it.player_name}
-                    playerImageUrl={it.player_image_url}
-                    playerPositionId={it.player_position_id}
-                    playerTeamId={it.player_team_id}
-                  >
-                    <Button
-                      color="white"
-                      onClick={() => addPlayerToRoster(it._id)}
-                      disabled={!curRoster}
+            {(liveSearchQuery.trim() !== '' && liveSearchQuery === searchQuery && (!isSearchPending || loadingMore) && searchData?.length !== 0) && (
+              <>
+                <div className={styles.sidePlayerList}>
+                  {searchData?.map((it) => (
+                    <PlayerCard
+                      key={it._id}
+                      playerName={it.player_name}
+                      playerImageUrl={it.player_image_url}
+                      playerPositionId={it.player_position_id}
+                      playerTeamId={it.player_team_id}
                     >
-                      Add
-                    </Button>
-                  </PlayerCard>
-                ))}
-              </div>
+                      <Button
+                        color="white"
+                        onClick={() => addPlayerToRoster(it._id)}
+                        disabled={!curRoster}
+                      >
+                        Add
+                      </Button>
+                    </PlayerCard>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '1rem' }}>
+                  <Button
+                    color="white"
+                    onClick={() => {
+                      setCurPage(curPage + 1)
+                      setLoadingMore(true)
+                    }}
+                  >
+                    Load More...
+                  </Button>
+                </div>
+              </>
             )}
 
           </div>
