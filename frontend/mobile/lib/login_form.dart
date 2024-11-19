@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'user_session.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -18,6 +19,13 @@ class _LoginFormState extends State<LoginForm> {
   String buildPath(String route) {
     return 'https://galaxycollapse.com/$route';
   }
+
+  void saveUserSession(Map<String, dynamic> userData) {
+  UserSession().userId = userData['id'].toString();
+  UserSession().firstName = userData['firstName'];
+  UserSession().lastName = userData['lastName'];
+  UserSession().email = userData['email'];
+}
 
   Future<void> doLogin() async {
     final String loginName = _usernameController.text;
@@ -49,6 +57,7 @@ class _LoginFormState extends State<LoginForm> {
           'email': res['email'],
           'id': res['id'],
         };
+        saveUserSession(user);     
 
         setState(() {
           message = '';
