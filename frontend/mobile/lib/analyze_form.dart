@@ -106,6 +106,18 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
     });
   }
 
+  void removePlayerFromTrade(int index, bool isTrading) {
+    setState(() {
+      if (isTrading) {
+        tradingEcr -= calculateEcr(tradingPlayers[index]['rank_ecr']);
+        tradingPlayers.removeAt(index);
+      } else {
+        receivingEcr -= calculateEcr(receivingPlayers[index]['rank_ecr']);
+        receivingPlayers.removeAt(index);
+      }
+    });
+  }
+
   double calculateEcr(int rankEcr) {
     return 15 - ((rankEcr - 1) * 0.05);
   }
@@ -218,8 +230,8 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                          foregroundColor: Colors.black, // Black text
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
                       ),
                       onPressed: () async {
                         await searchPlayers();
@@ -234,6 +246,8 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
                         title: Text(
                           player['player_name'],
                           style: const TextStyle(color: Colors.white),
+                          overflow: TextOverflow.ellipsis, // Prevent overlap
+                          maxLines: 1, // Ensure it doesn't take up more than one line
                         ),
                         subtitle: Text(
                           '${player['player_team_id']} - ${player['player_position_id']}',
@@ -265,7 +279,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
                     if (!isLoadingMore && searchResults.isNotEmpty)
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                           backgroundColor: Colors.blueAccent,
+                          backgroundColor: Colors.blueAccent,
                         ),
                         onPressed: () => searchPlayers(loadMore: true),
                         child: const Text('Load More'),
@@ -273,15 +287,6 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
                   ],
                 ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Close',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
             );
           },
         );
@@ -291,174 +296,146 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.black, Colors.indigo, Colors.black],
-          begin: Alignment.topRight,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      const Text(
-                        'Trading',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: tradingPlayers.length,
-                          itemBuilder: (context, index) {
-                            final player = tradingPlayers[index];
-                                                      return ListTile(
-                            title: AnimatedTextKit(
-                              animatedTexts: [
-                                ColorizeAnimatedText(
-                                  player['player_name'],
-                                  textStyle: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  colors: [
-                                    const Color.fromARGB(255, 21, 56, 255),
-                                    Colors.cyan,
-                                    Colors.lightBlueAccent,
-                                  ],
-                                  speed: const Duration(milliseconds: 500),
-                                ),
-                              ],
-                              isRepeatingAnimation: false,
-                            ),
-                            subtitle: AnimatedTextKit(
-                              animatedTexts: [
-                                ColorizeAnimatedText(
-                                  '${player['player_team_id']} - ${player['player_position_id']}',
-                                  textStyle: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                  colors: [
-                                    const Color.fromARGB(255, 21, 56, 255), // Blue animation for trading
-                                    Colors.cyan,
-                                    Colors.lightBlueAccent,
-                                  ],
-                                  speed: const Duration(milliseconds: 500),
-                                ),
-                              ],
-                              isRepeatingAnimation: false,
-                            ),
-                          );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-  child: Column(
-    children: [
-      const Text(
-        'Receiving',
-        style: TextStyle(fontSize: 18, color: Colors.white),
-      ),
-      Expanded(
-        child: ListView.builder(
-          itemCount: receivingPlayers.length,
-          itemBuilder: (context, index) {
-            final player = receivingPlayers[index];
-            return ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.end, // Align text to the right
-                children: [
-                  AnimatedTextKit(
-                    animatedTexts: [
-                      ColorizeAnimatedText(
-                        player['player_name'],
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        colors: [
-                          Colors.red, // Red animation for receiving
-                          const Color.fromARGB(255, 180, 0, 0),
-                          const Color.fromARGB(255, 73, 0, 0),
-                        ],
-                        speed: const Duration(milliseconds: 500),
-                      ),
-                    ],
-                    isRepeatingAnimation: false,
-                  ),
-                ],
-              ),
-              subtitle: Row(
-                mainAxisAlignment: MainAxisAlignment.end, // Align subtitle to the right
-                children: [
-                  AnimatedTextKit(
-                    animatedTexts: [
-                      ColorizeAnimatedText(
-                        '${player['player_team_id']} - ${player['player_position_id']}',
-                        textStyle: const TextStyle(
-                          fontSize: 16,
-                        ),
-                        colors: [
-                          Colors.red, // Red animation for receiving
-                          const Color.fromARGB(255, 180, 0, 0),
-                          const Color.fromARGB(255, 73, 0, 0),
-                        ],
-                        speed: const Duration(milliseconds: 500),
-                      ),
-                    ],
-                    isRepeatingAnimation: false,
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    ],
-  ),
-),
+    // Calculate Net Trade Value
+    double netTradeValue = receivingEcr - tradingEcr;
 
+    // Determine the color based on the value
+    Color netTradeValueColor = netTradeValue > 0
+        ? Colors.green
+        : netTradeValue < 0
+            ? Colors.red
+            : Colors.grey;
+
+    return Scaffold(
+      backgroundColor: Colors.black87,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Button to show search dialog
+            ElevatedButton(
+              onPressed: showSearchDialog,
+              child: const Text('Search for Players'),
+            ),
+            const SizedBox(height: 20),
+
+            // Net Trade Value display
+            Text(
+              'Net Trade Value:',
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              '${netTradeValue.toStringAsFixed(2)}', // Showing the value with 2 decimal points
+              style: TextStyle(
+                fontSize: 18,
+                color: netTradeValueColor, // Dynamic color based on value
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Trading Players Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Trading Players', style: const TextStyle(fontSize: 20, color: Colors.white)),
+              
               ],
             ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-               foregroundColor: Colors.black, // Black text
+            Expanded(
+              child: ListView.builder(
+                itemCount: tradingPlayers.length,
+                itemBuilder: (context, index) {
+                  final player = tradingPlayers[index];
+                  return ListTile(
+                    title: AnimatedTextKit(
+                      animatedTexts: [
+                        ColorizeAnimatedText(
+                          player['player_name'],
+                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          colors: [Colors.blue, Colors.blue, Colors.lightBlue],
+                        ),
+                      ],
+                      isRepeatingAnimation: false,
+                    ),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${player['player_team_id']} - ${player['player_position_id']}',
+                            style: const TextStyle(color: Colors.white70),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.grey),
+                      onPressed: () => removePlayerFromTrade(index, true),
+                    ),
+                  );
+                },
+              ),
             ),
-            onPressed: showSearchDialog,
-            child: const Text('Search Players'),
-          ),
-          AnimatedTextKit(
-  animatedTexts: [
-    ColorizeAnimatedText(
-      'Net Value: ${(receivingEcr - tradingEcr).toStringAsFixed(2)}',
-      textStyle: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
-      colors: [
-        Colors.purple, // Purple color
-        const Color.fromARGB(255, 0, 13, 87), // Dark blue
-        const Color.fromARGB(255, 0, 47, 255), // Bright blue
-        const Color.fromARGB(255, 204, 0, 255), // Pinkish-purple
-        const Color.fromARGB(255, 50, 0, 129), // Deep purple
-      ],
-      speed: const Duration(milliseconds: 600), // Adjust speed for smooth transitions
-    ),
-  ],
-  isRepeatingAnimation: true, // Animation will loop
-  repeatForever: true, // Ensures continuous animation
-),
-        ],
+            const SizedBox(height: 20),
+
+            // Receiving Players Section
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Receiving Players', style: const TextStyle(fontSize: 20, color: Colors.white)),
+              ],
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: receivingPlayers.length,
+                itemBuilder: (context, index) {
+                  final player = receivingPlayers[index];
+                  return ListTile(
+                    title: AnimatedTextKit(
+                      animatedTexts: [
+                        ColorizeAnimatedText(
+                          player['player_name'],
+                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          colors: [Colors.red, Colors.red, Colors.orange],
+                        ),
+                      ],
+                      isRepeatingAnimation: false,
+                    ),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${player['player_team_id']} - ${player['player_position_id']}',
+                            style: const TextStyle(color: Colors.white70),
+                            overflow: TextOverflow.ellipsis,
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.grey),
+                      onPressed: () => removePlayerFromTrade(index, false),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+
+
