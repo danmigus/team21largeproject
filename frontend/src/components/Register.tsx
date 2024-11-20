@@ -86,6 +86,7 @@ function Register()
             setMessage("Please click the link in your email.");
             let thanksMessage = document.getElementById("thanksMessage") as HTMLDivElement;
             thanksMessage.style.display = "block";
+            (document.getElementById("returnDiv") as HTMLDivElement).style.display = "block";
             
         }
         catch(error:any)
@@ -99,6 +100,7 @@ function Register()
     return(
         <div id="registerDiv"> 
         <h2 id="thanksMessage" style={{display: "none"}}>Thank you. Please check your email for the verification link.</h2>
+        <div id="returnDiv" style={{display: "none"}}><Link to="/" className="returnLink">Return to Login</Link></div>
             <div id="registrationForm">
                 <h1> Registration 📝</h1>
                 <div id="registerResult">{registerMessage}</div>
