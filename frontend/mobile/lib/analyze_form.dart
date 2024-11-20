@@ -343,7 +343,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Trading Players', style: const TextStyle(fontSize: 20, color: Colors.white)),
+                Text('Trading Players', style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
               
               ],
             ),
@@ -390,7 +390,7 @@ class _AnalyzeFormState extends State<AnalyzeForm> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Receiving Players', style: const TextStyle(fontSize: 20, color: Colors.white)),
+                Text('Receiving Players', style: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
               ],
             ),
             Expanded(
