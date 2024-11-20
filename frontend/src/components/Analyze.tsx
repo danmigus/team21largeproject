@@ -329,8 +329,10 @@ function Analyze()
                     <option>TE</option>
                 </select>
 
-                <button onClick={handlePreviousPage} disabled={(():boolean => {if(pageIndex === 0) {return true;} return false})()}> Prev Page</button>
-                <button onClick={handleNextPage}> Next Page </button>
+                <div>
+                    <button onClick={handlePreviousPage} disabled={(():boolean => {if(pageIndex === 0) {return true;} return false})()}> Prev Page</button>
+                    <button onClick={handleNextPage}> Next Page </button>
+                </div>
 
                 <div id="searchResults">
                 <ul style={{padding: "1px"}}>
