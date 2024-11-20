@@ -31,11 +31,6 @@ function Resend()
 
         event.preventDefault();
 
-        let verifyPartOne = document.getElementById("verifyPartOne") as HTMLDivElement;
-        verifyPartOne.style.display = "none";
-        let verifyPartTwo = document.getElementById("verifyPartTwo") as HTMLDivElement;
-        verifyPartTwo.style.display = "block";
-
         var obj = { email: verifyEmail};
         var js = JSON.stringify(obj);
 
@@ -47,9 +42,14 @@ function Resend()
             var res = JSON.parse(await response.text());
 
             if (res.error === 'Updated Token')
-                setMessage('✅ Updated token. Please return to login');
+                setMessage('✅ Please check your email.');
+            else if (res.error === "Invalid email format")
+            {
+                setMessage("Invalid email format 😡");
+                return;
+            }
             else
-                setMessage('❌ Unsuccessful verification');
+                setMessage('❌ Email could not be sent');
         }
         catch(error:any)
         {
@@ -64,15 +64,10 @@ function Resend()
             <h1> Resend email for verification 📧 </h1>
             <div id="verifyResult">{verifyMessage}</div>
             <br></br>
-            <div id="verifyPartOne">
-                <input type="email" id="verifyEmail" placeholder="Enter the email you want to verify" onChange={handleSetVerifyEmail} />
-                <br></br>
-                <input type="submit" id="verifyEmailButton" className="buttons" value = "Submit" onClick={doVerify}/>
-                <br></br>
-            </div>
-            <div id="verifyPartTwo" style={{display:'none'}}>
-                <h2>Thank you. Please check your email.</h2>
-            </div>
+            <input type="email" id="verifyEmail" placeholder="Enter the email you want to verify" onChange={handleSetVerifyEmail} />
+            <br></br>
+            <input type="submit" id="verifyEmailButton" className="buttons" value = "Submit" onClick={doVerify}/>
+            <br></br>
             <Link to="/" className="returnLink">Return to Login</Link>
         </div>
     );

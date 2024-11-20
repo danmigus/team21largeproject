@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'search_player_dialog.dart';
+import 'create_roster_dialog.dart';
+import 'select_roster_dialog.dart';
 
 class RosterBuilderForm extends StatefulWidget {
   final String userId;
@@ -14,6 +16,7 @@ class RosterBuilderForm extends StatefulWidget {
 
 class _RosterBuilderFormState extends State<RosterBuilderForm> {
   List<Map<String, dynamic>> rosters = [];
+  Map<String, dynamic>? selectedRoster;
   bool isLoading = true;
   String error = '';
 
@@ -41,6 +44,7 @@ class _RosterBuilderFormState extends State<RosterBuilderForm> {
         if (data['error'] == '') {
           setState(() {
             rosters = List<Map<String, dynamic>>.from(data['rosters']);
+            selectedRoster = rosters.isNotEmpty ? rosters[0] : null;
           });
         } else {
           setState(() {
@@ -63,12 +67,18 @@ class _RosterBuilderFormState extends State<RosterBuilderForm> {
     }
   }
 
-  Future<void> addPlayerToRoster(String rosterId, String playerId) async {
+  Future<void> addPlayerToRoster(String playerId) async {
+    if (selectedRoster == null) return;
+
     try {
       final response = await http.post(
         Uri.parse('https://galaxycollapse.com/api/addtoroster'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'userId': widget.userId, 'rosterId': rosterId, 'playerId': playerId}),
+        body: jsonEncode({
+          'userId': widget.userId,
+          'rosterId': selectedRoster!['RosterId'],
+          'playerId': playerId,
+        }),
       );
 
       final data = jsonDecode(response.body);
@@ -83,7 +93,9 @@ class _RosterBuilderFormState extends State<RosterBuilderForm> {
     }
   }
 
-  void showSearchPlayerDialog(String rosterId) {
+  void showSearchPlayerDialog() {
+    if (selectedRoster == null) return;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -91,7 +103,41 @@ class _RosterBuilderFormState extends State<RosterBuilderForm> {
           userId: widget.userId,
           onSelectPlayer: (String playerId) {
             Navigator.pop(context); // Close dialog
-            addPlayerToRoster(rosterId, playerId);
+            addPlayerToRoster(playerId);
+          },
+        );
+      },
+    );
+  }
+
+  void showCreateRosterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CreateRosterDialog(
+          userId: widget.userId,
+          onSuccess: (String newRosterName) {
+            setState(() {
+              selectedRoster = {'RosterName': newRosterName};
+            });
+            fetchRosters();
+          },
+        );
+      },
+    );
+  }
+
+  void showSelectRosterDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SelectRosterDialog(
+          rosters: rosters,
+          onSelectRoster: (selectedRosterName) {
+            setState(() {
+              selectedRoster = rosters.firstWhere(
+                  (roster) => roster['RosterName'] == selectedRosterName);
+            });
           },
         );
       },
@@ -104,27 +150,48 @@ class _RosterBuilderFormState extends State<RosterBuilderForm> {
         ? const Center(child: CircularProgressIndicator())
         : error.isNotEmpty
             ? Center(child: Text('Error: $error'))
-            : ListView.builder(
-                itemCount: rosters.length,
-                itemBuilder: (context, index) {
-                  final roster = rosters[index];
-                  return Card(
-                    child: ExpansionTile(
-                      title: Text(roster['RosterName']),
-                      children: [
-                        for (var player in roster['players'])
-                          ListTile(
-                            title: Text(player['player_name']),
-                            subtitle: Text('${player['player_team_id']} - ${player['player_position_id']}'),
+            : Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: showCreateRosterDialog,
+                        child: const Text('Create Roster'),
+                      ),
+                      ElevatedButton(
+                        onPressed: showSelectRosterDialog,
+                        child: const Text('Select Roster'),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: rosters.length,
+                      itemBuilder: (context, index) {
+                        final roster = rosters[index];
+                        return Card(
+                          child: ExpansionTile(
+                            title: Text(roster['RosterName']),
+                            children: [
+                              for (var player in roster['players'])
+                                ListTile(
+                                  title: Text(player['player_name']),
+                                  subtitle: Text(
+                                      '${player['player_team_id']} - ${player['player_position_id']}'),
+                                ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: showSearchPlayerDialog,
+                              ),
+                            ],
                           ),
-                        IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: () => showSearchPlayerDialog(roster['RosterId']),
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                ],
               );
   }
 }
+
