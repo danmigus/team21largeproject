@@ -258,23 +258,28 @@ app.post('/api/searchplayer', async (req, res, next) => {
 
 app.post('/api/resend', async (req, res, next) =>
   {
-    const { email } = req.body;
+    const { email: em } = req.body;
 
     const jwt = require('jsonwebtoken');
-    const token = jwt.sign({ email }, `${secretKey}`, { expiresIn: '15m'});
+    const token = jwt.sign({ em }, `${secretKey}`, { expiresIn: '15m'});
     console.log("New encoded token:" + token);
     const tokenUrl = `https://galaxycollapse.com/api/verify?token=${token}`;
 
-    req.body = { email : email, tokenUrl : tokenUrl};
-    await sendEmail(req, res);
-
+    req.body = { email : em, tokenUrl : tokenUrl};
     var error = '';
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
+    if (!emailRegex.test(em)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
     try
     {
+      await sendEmail(req, res);
       const db = client.db(); 
       
-      const updateToken = await db.collection('Users').updateOne({ Email : email }, {$set: { Token : token }})
+      const updateToken = await db.collection('Users').updateOne({ Email : em }, {$set: { Token : token }})
   
       error = "Updated Token";
     }
@@ -305,7 +310,6 @@ app.post('/api/register', async (req, res, next) =>
     var error = '';
 
     req.body = { email : em, tokenUrl : tokenUrl };
-    await sendEmail(req, res);
     
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   
@@ -315,6 +319,7 @@ app.post('/api/register', async (req, res, next) =>
     
     try
     {
+      await sendEmail(req, res);
       const db = client.db(); 
       
       const existingUser = await db.collection('Users').findOne({
@@ -374,6 +379,7 @@ app.post('/api/resetpassword', async (req, res, next) =>
   var error = '';
   const { email } = req.body;
   const jwt = require('jsonwebtoken');
+  
   try
   {
     const db = client.db();
