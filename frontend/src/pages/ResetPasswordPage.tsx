@@ -4,7 +4,7 @@ const ResetPasswordPage = () =>
 {
 
     return(
-      <div>
+      <div style={{background: 'url(../src/assets/pattern.png)'}}>
         <ResetPassword/>
       </div>
       
