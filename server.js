@@ -2,7 +2,7 @@ const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 const secretKey = process.env.SECRET_KEY;
 const sendGridKey = process.env.SENDGRID;
-const APIKey = process.env.APIKEY;
+const apiKey = process.env.APIKEY;
 
 const ourTime = new Date().toLocaleTimeString("en-US", {timeZone: 'America/New_York'});
 console.log("Server restarted: " + ourTime);
@@ -480,7 +480,7 @@ app.post('/api/addplayers', async (req, res) =>
     const response = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=QB&scoring=PPR', {
       method: 'GET',
       headers: {
-        'x-api-key': APIKey,
+        'x-api-key': apiKey,
       }
 
     }); 
@@ -512,7 +512,7 @@ app.post('/api/addplayers', async (req, res) =>
     const response2 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=WR&scoring=PPR', {
       method: 'GET',
       headers: {
-        'x-api-key': APIKey,
+        'x-api-key': apiKey,
       }
 
     }); 
@@ -542,7 +542,7 @@ app.post('/api/addplayers', async (req, res) =>
     const response3 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=RB&scoring=PPR', {
       method: 'GET',
       headers: {
-        'x-api-key': APIKey,
+        'x-api-key': apiKey,
       }
 
     }); 
@@ -572,7 +572,7 @@ app.post('/api/addplayers', async (req, res) =>
     const response4 = await fetch('https://api.fantasypros.com/public/v2/json/nfl/2024/consensus-rankings?position=TE&scoring=PPR', {
       method: 'GET',
       headers: {
-        'x-api-key': APIKey,
+        'x-api-key': apiKey,
       }
 
     }); 
