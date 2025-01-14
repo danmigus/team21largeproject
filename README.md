@@ -4,7 +4,7 @@ Fantasy football trade value analyzer using a MERN stack and other technologies.
 
 Player information pulled from FantasyPros: https://api.fantasypros.com/public/v2/docs/#consensus-rankings
 
-![site1](https://github.com/user-attachments/assets/77186406-b4bf-4a3a-aa04-fd2ede2c7c2d)
+![site3](https://github.com/user-attachments/assets/0f5aa471-cc3b-4522-bd58-03d1c9dd5731)
 
 **Player images are anonymous due to copyright reasons*
 
