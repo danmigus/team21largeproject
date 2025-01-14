@@ -194,7 +194,7 @@ export default function RosterBuilder() {
               {curRosterObj.players.map((it:any) => (
                 <PlayerCard
                   playerName={it.player_name}
-                  playerImageUrl={it.player_image_url}
+                  playerImageUrl={'../src/assets/anon.PNG'}
                   playerPositionId={it.player_position_id}
                   playerTeamId={it.player_team_id}
                 >
@@ -264,7 +264,7 @@ export default function RosterBuilder() {
                     <PlayerCard
                       key={it._id}
                       playerName={it.player_name}
-                      playerImageUrl={it.player_image_url}
+                      playerImageUrl={'../src/assets/anon.PNG'}
                       playerPositionId={it.player_position_id}
                       playerTeamId={it.player_team_id}
                     >
